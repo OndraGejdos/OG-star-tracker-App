@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -64,6 +65,7 @@ fun PhotoControlCard(
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.animateContentSize()
+			.alpha(1f.takeIf { uiState.trackerConnected } ?: 0.5f)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -107,7 +109,7 @@ fun PhotoControlCard(
 				.padding(top = DimensSmall100)
 		) {
 			ActionInput(
-				enabled = !uiState.capturingActive,
+				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				textFieldState = uiState.exposeTime,
 				label = "Exposure length",
 				placeholder = "0",
@@ -122,7 +124,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
-				enabled = !uiState.capturingActive,
+				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.frameCount,
 				label = "Number of exposures",
@@ -173,7 +175,7 @@ fun PhotoControlCard(
 					onPhotoControlEvent(PhotoControlEvent.DitheringActivation(!uiState.ditheringEnabled))
 				},
 				modifier = Modifier.padding(end = DimensNormal100),
-				enabled = !uiState.capturingActive,
+				enabled = !uiState.capturingActive && uiState.trackerConnected,
 			)
 		}
 
@@ -183,7 +185,7 @@ fun PhotoControlCard(
 				.padding(top = DimensNormal100)
 		) {
 			ActionInput(
-				enabled = !uiState.capturingActive,
+				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				textFieldState = uiState.ditherFocalLength,
 				label = "Focal length",
 				placeholder = "0",
@@ -198,7 +200,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
-				enabled = !uiState.capturingActive,
+				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.ditherPixelSize,
 				label = "Pixel size",
@@ -245,7 +247,7 @@ fun PhotoControlCard(
 					.weight(1f)
 					.height(40.dp),
 				contentPadding = PaddingValues(horizontal = DimensSmall100),
-				enabled = !uiState.capturingActive
+				enabled = !uiState.capturingActive && uiState.trackerConnected,
 			) {
 				Text(
 					text = "Start capture".uppercase(),
@@ -266,7 +268,7 @@ fun PhotoControlCard(
 					.weight(1f)
 					.height(40.dp),
 				contentPadding = PaddingValues(horizontal = DimensSmall100),
-				enabled = uiState.capturingActive
+				enabled = uiState.capturingActive && uiState.trackerConnected,
 			) {
 				Text(
 					text = "End capture".uppercase(),

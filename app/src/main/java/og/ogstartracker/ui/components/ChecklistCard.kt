@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
@@ -53,6 +54,7 @@ val text = """
 
 @Composable
 fun ChecklistCard(
+	enabled: Boolean,
 	opened: Boolean,
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
@@ -86,10 +88,12 @@ fun ChecklistCard(
 					color = ColorPrimary,
 					bounded = true,
 				),
+				enabled = enabled
 			) {
 				onClick()
 			}
 			.animateContentSize()
+			.alpha(1f.takeIf { enabled } ?: 0.5f)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -154,10 +158,12 @@ fun ChecklistCardPreview() {
 			ChecklistCard(
 				opened = false,
 				onClick = {},
+				enabled = true
 			)
 			ChecklistCard(
 				opened = true,
 				onClick = {},
+				enabled = true
 			)
 		}
 	}

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -31,6 +32,7 @@ import og.ogstartracker.ui.theme.textStyle16Bold
 
 @Composable
 fun SiderealCard(
+	enabled: Boolean,
 	active: Boolean,
 	onCheckChanged: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
@@ -48,6 +50,7 @@ fun SiderealCard(
 			)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
+			.alpha(1f.takeIf { enabled } ?: 0.5f)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -81,7 +84,7 @@ fun SiderealCard(
 				checked = active,
 				onCheckChange = onCheckChanged,
 				modifier = Modifier.padding(end = DimensNormal100),
-				enabled = true
+				enabled = enabled
 			)
 		}
 	}
@@ -94,11 +97,13 @@ fun SiderealCardPreview() {
 		Column {
 			SiderealCard(
 				onCheckChanged = {},
-				active = true
+				active = true,
+				enabled = true
 			)
 			SiderealCard(
 				onCheckChanged = {},
-				active = false
+				active = false,
+				enabled = true
 			)
 		}
 	}

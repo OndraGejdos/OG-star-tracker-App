@@ -101,7 +101,7 @@ class DashboardViewModel internal constructor(
 }
 
 data class HomeUiState internal constructor(
-	val connected: Boolean = false,
+	val trackerConnected: Boolean = true,
 	val openedCheckbox: Boolean = false,
 	val siderealActive: Boolean = false,
 	val slewValue: Int = 0,

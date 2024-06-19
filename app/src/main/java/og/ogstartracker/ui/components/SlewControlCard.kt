@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -32,7 +33,6 @@ import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.ColorShadow
 import og.ogstartracker.ui.theme.DimensNormal100
-import og.ogstartracker.ui.theme.DimensNormal125
 import og.ogstartracker.ui.theme.DimensNormal150
 import og.ogstartracker.ui.theme.DimensNormal200
 import og.ogstartracker.ui.theme.DimensSmall100
@@ -48,6 +48,7 @@ import og.ogstartracker.ui.theme.textStyle20Bold
 
 @Composable
 fun SlewControlCard(
+	enabled: Boolean,
 	stepSize: Int,
 	slewControlCommands: (SlewControlEvent) -> Unit,
 	modifier: Modifier = Modifier,
@@ -65,6 +66,7 @@ fun SlewControlCard(
 			)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
+			.alpha(1f.takeIf { enabled } ?: 0.5f)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -110,7 +112,8 @@ fun SlewControlCard(
 			IconButton(
 				onClick = {
 					slewControlCommands(SlewControlEvent.Minus)
-				}
+				},
+				enabled = enabled
 			) {
 				Icon(
 					painter = painterResource(id = R.drawable.ic_minus_circle),
@@ -130,7 +133,8 @@ fun SlewControlCard(
 			IconButton(
 				onClick = {
 					slewControlCommands(SlewControlEvent.Plus)
-				}
+				},
+				enabled = enabled
 			) {
 				Icon(
 					painter = painterResource(id = R.drawable.ic_plus_circle),
@@ -158,13 +162,16 @@ fun SlewControlCard(
 			)
 
 			Button(
+				enabled = enabled,
 				onClick = {
 					slewControlCommands(SlewControlEvent.RotateAnticlockwise)
 				},
 				contentPadding = PaddingValues(horizontal = DimensSmall125),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = AppTheme.colorScheme.primary,
-					contentColor = AppTheme.colorScheme.background
+					contentColor = AppTheme.colorScheme.background,
+					disabledContainerColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f),
+					disabledContentColor = AppTheme.colorScheme.background
 				),
 				modifier = Modifier
 					.padding(end = DimensSmall100)
@@ -186,6 +193,7 @@ fun SlewControlCard(
 			}
 
 			Button(
+				enabled = enabled,
 				onClick = {
 					slewControlCommands(SlewControlEvent.RotateClockwise)
 				},
@@ -194,7 +202,9 @@ fun SlewControlCard(
 				),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = AppTheme.colorScheme.primary,
-					contentColor = AppTheme.colorScheme.background
+					contentColor = AppTheme.colorScheme.background,
+					disabledContainerColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f),
+					disabledContentColor = AppTheme.colorScheme.background
 				),
 				modifier = Modifier.height(40.dp),
 			) {
@@ -226,7 +236,8 @@ fun SlewControlCardPreview() {
 		Column {
 			SlewControlCard(
 				slewControlCommands = {},
-				stepSize = 4
+				stepSize = 4,
+				enabled = true
 			)
 		}
 	}

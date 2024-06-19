@@ -1,6 +1,5 @@
 package og.ogstartracker.ui.screens
 
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,8 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import og.ogstartracker.SystemUiHelper
 import og.ogstartracker.ui.components.ChecklistCard
 import og.ogstartracker.ui.components.ConnectionCard
@@ -111,7 +108,7 @@ private fun DashboardScreenLayout(
 		}
 
 		item {
-			ConnectionCard(connected = uiState.connected)
+			ConnectionCard(connected = uiState.trackerConnected)
 		}
 
 		item {
@@ -124,7 +121,8 @@ private fun DashboardScreenLayout(
 		item {
 			ChecklistCard(
 				opened = uiState.openedCheckbox,
-				onClick = onChecklistClicked
+				onClick = onChecklistClicked,
+				enabled = uiState.trackerConnected
 			)
 		}
 
@@ -134,6 +132,7 @@ private fun DashboardScreenLayout(
 				onCheckChanged = {
 					onSiderealClicked(!uiState.siderealActive)
 				},
+				enabled = uiState.trackerConnected
 			)
 		}
 
@@ -141,6 +140,7 @@ private fun DashboardScreenLayout(
 			SlewControlCard(
 				slewControlCommands = onSlewControlEvent,
 				stepSize = uiState.slewValue,
+				enabled = uiState.trackerConnected
 			)
 		}
 
