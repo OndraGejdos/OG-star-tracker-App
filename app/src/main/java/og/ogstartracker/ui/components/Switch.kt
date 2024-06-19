@@ -16,10 +16,12 @@ import og.ogstartracker.ui.theme.DimensSmall50
 @Composable
 fun CustomSwitch(
 	checked: Boolean,
+	enabled: Boolean,
 	onCheckChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	Switch(
+		enabled = enabled,
 		modifier = modifier,
 		checked = checked,
 		onCheckedChange = onCheckChange,
@@ -31,6 +33,11 @@ fun CustomSwitch(
 			uncheckedTrackColor = AppTheme.colorScheme.background,
 			uncheckedBorderColor = AppTheme.colorScheme.primary,
 			uncheckedThumbColor = AppTheme.colorScheme.primary,
+			disabledUncheckedBorderColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f),
+			disabledCheckedThumbColor = AppTheme.colorScheme.background,
+			disabledCheckedTrackColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f),
+			disabledCheckedIconColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f),
+			disabledUncheckedThumbColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f)
 		),
 		thumbContent = if (checked) {
 			{
@@ -51,8 +58,11 @@ fun CustomSwitch(
 fun BananaSwitchPreview() {
 	AppTheme {
 		Column {
-			CustomSwitch(checked = false, {})
-			CustomSwitch(checked = true, {})
+			CustomSwitch(checked = false, enabled = true, {})
+			CustomSwitch(checked = true, enabled = true, {})
+
+			CustomSwitch(checked = false, enabled = false, {})
+			CustomSwitch(checked = true, enabled = false, {})
 		}
 	}
 }

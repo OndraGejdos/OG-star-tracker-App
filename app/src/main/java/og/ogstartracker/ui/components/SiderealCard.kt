@@ -80,7 +80,8 @@ fun SiderealCard(
 			CustomSwitch(
 				checked = active,
 				onCheckChange = onCheckChanged,
-				modifier = Modifier.padding(end = DimensNormal100)
+				modifier = Modifier.padding(end = DimensNormal100),
+				enabled = true
 			)
 		}
 	}

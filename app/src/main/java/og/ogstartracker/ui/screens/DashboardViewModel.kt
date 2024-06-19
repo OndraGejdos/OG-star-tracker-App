@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import og.ogstartracker.Config.SLEW_MAX_VALUE
+import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.ui.components.NotEmptyValidator
 import og.ogstartracker.ui.components.PhotoControlEvent
 import og.ogstartracker.ui.components.SlewControlEvent
@@ -19,17 +21,23 @@ class DashboardViewModel internal constructor() : ViewModel() {
 	}
 
 	internal fun changeSidereal(active: Boolean) {
+		if (active) {
+			// TODO call arduino
+		} else {
+			// TODO call arduino
+		}
+
 		_uiState.update { it.copy(siderealActive = active) }
 	}
 
 	fun slewControlEvent(slewControlEvent: SlewControlEvent) {
 		when (slewControlEvent) {
 			SlewControlEvent.Minus -> _uiState.update {
-				it.copy(slewValue = (it.slewValue - 1).coerceAtLeast(0))
+				it.copy(slewValue = (it.slewValue - 1).coerceAtLeast(SLEW_MIN_VALUE))
 			}
 
 			SlewControlEvent.Plus -> _uiState.update {
-				it.copy(slewValue = (it.slewValue + 1).coerceAtMost(5))
+				it.copy(slewValue = (it.slewValue + 1).coerceAtMost(SLEW_MAX_VALUE))
 			}
 
 			SlewControlEvent.RotateAnticlockwise -> {
@@ -50,10 +58,12 @@ class DashboardViewModel internal constructor() : ViewModel() {
 
 			PhotoControlEvent.EndCapture -> {
 				// TODO call arduino
+				_uiState.update { it.copy(capturingActive = false) }
 			}
 
 			PhotoControlEvent.StartCapture -> {
 				// TODO call arduino
+				_uiState.update { it.copy(capturingActive = true) }
 			}
 		}
 	}

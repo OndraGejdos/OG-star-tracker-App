@@ -3,7 +3,6 @@ package og.ogstartracker.ui.components.common
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import og.ogstartracker.ui.components.TextFieldState
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ShapeNormal
+import og.ogstartracker.ui.theme.textStyle12Bold
+import og.ogstartracker.ui.theme.textStyle16Bold
+import og.ogstartracker.ui.theme.textStyle16Regular
 
 @Composable
 fun ActionInput(
@@ -37,9 +39,9 @@ fun ActionInput(
 	singleLine: Boolean = true,
 	readOnly: Boolean = false,
 	enabled: Boolean = true,
-	labelTextStyle: TextStyle = MaterialTheme.typography.labelSmall,
-	placeholderTextStyle: TextStyle = MaterialTheme.typography.bodyMedium,
-	textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+	labelTextStyle: TextStyle = textStyle16Regular,
+	placeholderTextStyle: TextStyle = textStyle16Regular,
+	textStyle: TextStyle = textStyle16Regular,
 	leadingIcon: @Composable (() -> Unit)? = null,
 	trailingIcon: @Composable (() -> Unit)? = null,
 	keyboardType: KeyboardType = KeyboardType.Text,
@@ -69,7 +71,10 @@ fun ActionInput(
 			unfocusedTextColor = AppTheme.colorScheme.secondary,
 			focusedLabelColor = AppTheme.colorScheme.secondary,
 			focusedPlaceholderColor = AppTheme.colorScheme.secondary,
-			unfocusedLabelColor = AppTheme.colorScheme.secondary
+			unfocusedLabelColor = AppTheme.colorScheme.secondary,
+			disabledBorderColor = AppTheme.colorScheme.primary.copy(alpha = 0.5f),
+			disabledTextColor = AppTheme.colorScheme.secondary.copy(alpha = 0.5f),
+			disabledLabelColor = AppTheme.colorScheme.secondary.copy(alpha = 0.5f)
 		),
 		visualTransformation = visualTransformation,
 		singleLine = singleLine,

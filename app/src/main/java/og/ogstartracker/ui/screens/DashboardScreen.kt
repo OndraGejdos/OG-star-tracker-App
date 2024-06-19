@@ -1,9 +1,11 @@
 package og.ogstartracker.ui.screens
 
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -11,11 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import og.ogstartracker.SystemUiHelper
 import og.ogstartracker.ui.components.ChecklistCard
 import og.ogstartracker.ui.components.ConnectionCard
@@ -83,7 +88,11 @@ private fun DashboardScreenLayout(
 	onSiderealClicked: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
+	val state = rememberLazyListState()
+	val scope = rememberCoroutineScope()
+
 	LazyColumn(
+		state = state,
 		modifier = modifier,
 		contentPadding = PaddingValues(
 			bottom = LocalInsets.current.navigationBarInset + DimensNormal200
@@ -138,7 +147,7 @@ private fun DashboardScreenLayout(
 		item {
 			PhotoControlCard(
 				uiState = uiState,
-				onPhotoControlEvent = onPhotoControlEvent
+				onPhotoControlEvent = onPhotoControlEvent,
 			)
 		}
 	}

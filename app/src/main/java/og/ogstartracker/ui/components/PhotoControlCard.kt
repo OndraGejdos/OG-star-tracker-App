@@ -1,5 +1,6 @@
 package og.ogstartracker.ui.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import og.ogstartracker.ui.theme.DimensSmall100
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
+import og.ogstartracker.ui.theme.textStyle12Bold
 import og.ogstartracker.ui.theme.textStyle14Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
@@ -61,6 +63,7 @@ fun PhotoControlCard(
 			)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
+			.animateContentSize()
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -104,6 +107,7 @@ fun PhotoControlCard(
 				.padding(top = DimensSmall100)
 		) {
 			ActionInput(
+				enabled = !uiState.capturingActive,
 				textFieldState = uiState.exposeTime,
 				label = "Exposure length",
 				placeholder = "0",
@@ -118,6 +122,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
+				enabled = !uiState.capturingActive,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.frameCount,
 				label = "Number of exposures",
@@ -167,7 +172,8 @@ fun PhotoControlCard(
 				onCheckChange = {
 					onPhotoControlEvent(PhotoControlEvent.DitheringActivation(!uiState.ditheringEnabled))
 				},
-				modifier = Modifier.padding(end = DimensNormal100)
+				modifier = Modifier.padding(end = DimensNormal100),
+				enabled = !uiState.capturingActive,
 			)
 		}
 
@@ -177,6 +183,7 @@ fun PhotoControlCard(
 				.padding(top = DimensNormal100)
 		) {
 			ActionInput(
+				enabled = !uiState.capturingActive,
 				textFieldState = uiState.ditherFocalLength,
 				label = "Focal length",
 				placeholder = "0",
@@ -191,6 +198,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
+				enabled = !uiState.capturingActive,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.ditherPixelSize,
 				label = "Pixel size",
@@ -213,6 +221,10 @@ fun PhotoControlCard(
 			modifier = Modifier.padding(vertical = DimensNormal100)
 		)
 
+		if (uiState.capturingActive) {
+			CaptureInfo()
+		}
+
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(DimensNormal100),
 			modifier = Modifier
@@ -220,7 +232,9 @@ fun PhotoControlCard(
 				.padding(bottom = DimensNormal100)
 		) {
 			Button(
-				onClick = { onPhotoControlEvent(PhotoControlEvent.StartCapture) },
+				onClick = {
+					onPhotoControlEvent(PhotoControlEvent.StartCapture)
+				},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = AppTheme.colorScheme.primary,
 					contentColor = AppTheme.colorScheme.background,
@@ -264,13 +278,61 @@ fun PhotoControlCard(
 	}
 }
 
+@Composable
+private fun CaptureInfo() {
+	Row(
+		Modifier
+			.fillMaxWidth()
+			.padding(horizontal = DimensNormal100),
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Text(
+			text = "Number of exposures taken".uppercase(),
+			style = textStyle12Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+		Text(
+			text = "20/300",
+			style = textStyle16Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+	}
+
+	Row(
+		Modifier
+			.fillMaxWidth()
+			.padding(horizontal = DimensNormal100)
+			.padding(top = DimensSmall100),
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Text(
+			text = "Elapsed time".uppercase(),
+			style = textStyle12Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+		Text(
+			text = "0h 14m 41s",
+			style = textStyle16Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+	}
+
+	HorizontalDivider(
+		color = AppTheme.colorScheme.shadow,
+		thickness = 2.dp,
+		modifier = Modifier.padding(vertical = DimensNormal100)
+	)
+}
+
 @Preview
 @Composable
 fun PhotoControlCardPreview() {
 	AppTheme {
 		PhotoControlCard(
 			uiState = HomeUiState(),
-			onPhotoControlEvent = {}
+			onPhotoControlEvent = {},
 		)
 	}
 }
