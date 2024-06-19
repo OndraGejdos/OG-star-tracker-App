@@ -1,5 +1,6 @@
 package og.ogstartracker.ui.screens
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,8 +11,15 @@ import og.ogstartracker.ui.components.NotEmptyValidator
 import og.ogstartracker.ui.components.PhotoControlEvent
 import og.ogstartracker.ui.components.SlewControlEvent
 import og.ogstartracker.ui.components.TextFieldState
+import og.ogstartracker.utils.VibratorController
+import og.ogstartracker.utils.vibrationPatternClick
+import og.ogstartracker.utils.vibrationPatternThreeClick
 
-class DashboardViewModel internal constructor() : ViewModel() {
+class DashboardViewModel internal constructor(
+	private val context: Context,
+) : ViewModel() {
+
+	private val vibratorController = VibratorController()
 
 	private val _uiState = MutableStateFlow(HomeUiState())
 	val uiState = _uiState.asStateFlow()
@@ -28,42 +36,65 @@ class DashboardViewModel internal constructor() : ViewModel() {
 		}
 
 		_uiState.update { it.copy(siderealActive = active) }
+
+		if (active) {
+			vibratorController.startVibrations(context, vibrationPatternThreeClick)
+		} else {
+			vibratorController.startVibrations(context, vibrationPatternClick)
+		}
 	}
 
 	fun slewControlEvent(slewControlEvent: SlewControlEvent) {
 		when (slewControlEvent) {
-			SlewControlEvent.Minus -> _uiState.update {
-				it.copy(slewValue = (it.slewValue - 1).coerceAtLeast(SLEW_MIN_VALUE))
+			SlewControlEvent.Minus -> {
+				_uiState.update {
+					it.copy(slewValue = (it.slewValue - 1).coerceAtLeast(SLEW_MIN_VALUE))
+				}
+				vibratorController.startVibrations(context, vibrationPatternClick)
 			}
 
-			SlewControlEvent.Plus -> _uiState.update {
-				it.copy(slewValue = (it.slewValue + 1).coerceAtMost(SLEW_MAX_VALUE))
+			SlewControlEvent.Plus -> {
+				_uiState.update {
+					it.copy(slewValue = (it.slewValue + 1).coerceAtMost(SLEW_MAX_VALUE))
+				}
+				vibratorController.startVibrations(context, vibrationPatternClick)
 			}
 
 			SlewControlEvent.RotateAnticlockwise -> {
 				// TODO call arduino
+				vibratorController.startVibrations(context, vibrationPatternClick)
 			}
 
 			SlewControlEvent.RotateClockwise -> {
 				// TODO call arduino
+				vibratorController.startVibrations(context, vibrationPatternClick)
 			}
 		}
 	}
 
 	internal fun photoControlEvent(photoControlEvent: PhotoControlEvent) {
 		when (photoControlEvent) {
-			is PhotoControlEvent.DitheringActivation -> _uiState.update {
-				it.copy(ditheringEnabled = photoControlEvent.active)
+			is PhotoControlEvent.DitheringActivation -> {
+				_uiState.update {
+					it.copy(ditheringEnabled = photoControlEvent.active)
+				}
+				if (photoControlEvent.active) {
+					vibratorController.startVibrations(context, vibrationPatternThreeClick)
+				} else {
+					vibratorController.startVibrations(context, vibrationPatternClick)
+				}
 			}
 
 			PhotoControlEvent.EndCapture -> {
 				// TODO call arduino
 				_uiState.update { it.copy(capturingActive = false) }
+				vibratorController.startVibrations(context, vibrationPatternClick)
 			}
 
 			PhotoControlEvent.StartCapture -> {
 				// TODO call arduino
 				_uiState.update { it.copy(capturingActive = true) }
+				vibratorController.startVibrations(context, vibrationPatternThreeClick)
 			}
 		}
 	}
