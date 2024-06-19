@@ -38,9 +38,22 @@ val textStyle16Bold = TextStyle(
 	fontFamily = interAppFontFamily,
 )
 
-val textStyle10ItalicBold = TextStyle(
+val textStyle24Bold = TextStyle(
+	fontWeight = FontWeight.Bold,
+	fontSize = 24.sp,
+	fontFamily = interAppFontFamily,
+)
+
+val textStyle20Bold = TextStyle(
+	fontWeight = FontWeight.Bold,
+	fontSize = 20.sp,
+	fontFamily = interAppFontFamily,
+)
+
+val textStyle10Bold = TextStyle(
 	fontWeight = FontWeight.Bold,
 	fontSize = 10.sp,
 	fontFamily = interAppFontFamily,
-	fontStyle = FontStyle.Italic
 )
+
+val textStyle10ItalicBold = textStyle10Bold.copy(fontStyle = FontStyle.Italic)

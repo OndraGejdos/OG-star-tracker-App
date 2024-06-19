@@ -50,11 +50,12 @@ dependencies {
 	implementation(libs.androidx.ui.tooling.preview)
 	implementation(libs.androidx.material3)
 	implementation(libs.androidx.navigation.runtime.ktx)
+	implementation(libs.androidx.navigation.compose)
 	debugImplementation(libs.androidx.ui.tooling)
 
-	implementation(libs.accompanistSystemUiController)
+	implementation(libs.koinCore)
+	implementation(libs.koinAndroid)
+	implementation(libs.koinCompose)
 
-	implementation(libs.hiltAndroid)
-	implementation(libs.hiltNavCompose)
-//	ksp(libs.hiltCompiler)
+	implementation(libs.accompanistSystemUiController)
 }

@@ -10,21 +10,20 @@ composeBom = "2024.04.01"
 uiTooling = "1.6.8"
 accompanist = "0.34.0"
 navigationRuntimeKtx = "2.7.7"
-hilt = "2.50"
 serializationJson = "1.6.2"
 hiltAndroidGradlePlugin = "2.50"
 kotlinxSerialization = { id = "kotlinx-serialization" }
-hiltCompose = "1.2.0-beta01"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.7.0"
+koin = "3.5.6"
 material = "1.12.0"
 kotlinKsp = "1.9.22-1.0.17"
 jetbrainsKotlinJvm = "1.9.22"
 gradle = "8.4.0-rc02"
-serialization = "org.jetbrains.kotlin.plugin.serialization:1.9.20-Beta"
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+navigationCompose = "2.7.7"
 
 
 [libraries]
@@ -39,10 +38,6 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 accompanistSystemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
-hiltAndroidGradlePlugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hiltAndroidGradlePlugin" }
-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
-hiltNavCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -52,11 +47,14 @@ kotlinKspGradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 kotlinJdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinGradlePlugin" }
 serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
+koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koinCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt.android" }
 kotlinKspPlugin = { id = "com.google.devtools.ksp", version.ref = "kotlinKsp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 
