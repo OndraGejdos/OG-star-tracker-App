@@ -1,5 +1,6 @@
 package og.ogstartracker.ui.screens
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,8 +19,14 @@ import androidx.navigation.NavController
 import og.ogstartracker.SystemUiHelper
 import og.ogstartracker.ui.components.ChecklistCard
 import og.ogstartracker.ui.components.ConnectionCard
+import og.ogstartracker.ui.components.LocalInsets
+import og.ogstartracker.ui.components.PhotoControlCard
+import og.ogstartracker.ui.components.PhotoControlEvent
 import og.ogstartracker.ui.components.SiderealCard
+import og.ogstartracker.ui.components.SlewControlCard
+import og.ogstartracker.ui.components.SlewControlEvent
 import og.ogstartracker.ui.theme.AppTheme
+import og.ogstartracker.ui.theme.DimensNormal200
 import og.ogstartracker.ui.theme.DimensSmall100
 import og.ogstartracker.ui.theme.textStyle20Bold
 import org.koin.androidx.compose.koinViewModel
@@ -36,7 +43,9 @@ fun DashboardScreen(
 	DashboardScreenContent(
 		uiState = uiState,
 		onChecklistClicked = viewModel::changeChecklist,
-		onSiderealClicked = viewModel::changeSidereal
+		onSiderealClicked = viewModel::changeSidereal,
+		onSlewControlEvent = viewModel::slewControlEvent,
+		onPhotoControlEvent = viewModel::photoControlEvent,
 	)
 }
 
@@ -45,16 +54,20 @@ private fun DashboardScreenContent(
 	uiState: HomeUiState,
 	onChecklistClicked: () -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
+	onSlewControlEvent: (SlewControlEvent) -> Unit,
+	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	Scaffold(
 		modifier = modifier,
 		content = { paddings ->
 			DashboardScreenLayout(
-				modifier = Modifier.padding(paddings),
+				modifier = Modifier.padding(top = paddings.calculateTopPadding()),
 				uiState = uiState,
 				onChecklistClicked = onChecklistClicked,
-				onSiderealClicked = onSiderealClicked
+				onSiderealClicked = onSiderealClicked,
+				onSlewControlEvent = onSlewControlEvent,
+				onPhotoControlEvent = onPhotoControlEvent,
 			)
 		},
 		containerColor = MaterialTheme.colorScheme.surface,
@@ -65,10 +78,17 @@ private fun DashboardScreenContent(
 private fun DashboardScreenLayout(
 	uiState: HomeUiState,
 	onChecklistClicked: () -> Unit,
+	onSlewControlEvent: (SlewControlEvent) -> Unit,
+	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	LazyColumn(modifier = modifier) {
+	LazyColumn(
+		modifier = modifier,
+		contentPadding = PaddingValues(
+			bottom = LocalInsets.current.navigationBarInset + DimensNormal200
+		)
+	) {
 		item {
 			Text(
 				modifier = Modifier
@@ -107,6 +127,20 @@ private fun DashboardScreenLayout(
 				},
 			)
 		}
+
+		item {
+			SlewControlCard(
+				slewControlCommands = onSlewControlEvent,
+				stepSize = uiState.slewValue,
+			)
+		}
+
+		item {
+			PhotoControlCard(
+				uiState = uiState,
+				onPhotoControlEvent = onPhotoControlEvent
+			)
+		}
 	}
 }
 
@@ -117,7 +151,9 @@ internal fun HomeScreenContentPreview() {
 		DashboardScreenContent(
 			uiState = HomeUiState(),
 			onChecklistClicked = {},
-			onSiderealClicked = {}
+			onSiderealClicked = {},
+			onSlewControlEvent = {},
+			onPhotoControlEvent = {}
 		)
 	}
 }

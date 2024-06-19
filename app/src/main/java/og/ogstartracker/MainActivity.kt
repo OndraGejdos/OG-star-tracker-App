@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
+import og.ogstartracker.ui.components.ProvidesInsets
 import og.ogstartracker.ui.screens.DashboardScreen
 import og.ogstartracker.ui.theme.AppTheme
 
@@ -17,8 +18,10 @@ class MainActivity : ComponentActivity() {
 
 		setContent {
 			AppTheme {
-				val navController = rememberNavController()
-				DashboardScreen(navController = navController)
+				ProvidesInsets {
+					val navController = rememberNavController()
+					DashboardScreen(navController = navController)
+				}
 			}
 		}
 	}

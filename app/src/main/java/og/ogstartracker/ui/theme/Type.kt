@@ -32,11 +32,13 @@ val Typography = Typography(
 	)
 )
 
-val textStyle16Bold = TextStyle(
-	fontWeight = FontWeight.Bold,
+val textStyle16Regular = TextStyle(
+	fontWeight = FontWeight.Normal,
 	fontSize = 16.sp,
 	fontFamily = interAppFontFamily,
 )
+
+val textStyle16Bold = textStyle16Regular.copy(fontWeight = FontWeight.Bold)
 
 val textStyle24Bold = TextStyle(
 	fontWeight = FontWeight.Bold,
@@ -53,6 +55,18 @@ val textStyle20Bold = TextStyle(
 val textStyle10Bold = TextStyle(
 	fontWeight = FontWeight.Bold,
 	fontSize = 10.sp,
+	fontFamily = interAppFontFamily,
+)
+
+val textStyle12Bold = TextStyle(
+	fontWeight = FontWeight.Bold,
+	fontSize = 12.sp,
+	fontFamily = interAppFontFamily,
+)
+
+val textStyle14Bold = TextStyle(
+	fontWeight = FontWeight.Bold,
+	fontSize = 14.sp,
 	fontFamily = interAppFontFamily,
 )
 
