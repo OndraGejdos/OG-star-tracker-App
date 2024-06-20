@@ -27,8 +27,6 @@ class VibratorController constructor(
 	/**
 	 * Starts vibrations based on the SDK version. If the device is S+ it will use [startVibrationsOnS] to start it else
 	 * it will use [startVibrationsPreS].
-	 *
-	 * @param context is used to initialize [vibratorManager] or [vibrator] based on the SDK version
 	 */
 	fun startVibrations(vibrationPattern: LongArray) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

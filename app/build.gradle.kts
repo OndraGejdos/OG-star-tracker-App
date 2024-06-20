@@ -52,6 +52,11 @@ dependencies {
 	implementation(libs.androidx.material3)
 	implementation(libs.androidx.navigation.runtime.ktx)
 	implementation(libs.androidx.navigation.compose)
+	implementation(libs.retrofit)
+	implementation(libs.retrofitConverter)
+	implementation(libs.okhttp)
+	implementation(libs.timber)
+	implementation(libs.okhttpInterceptor)
 	implementation(libs.splashScreen)
 	debugImplementation(libs.androidx.ui.tooling)
 

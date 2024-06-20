@@ -1,13 +1,17 @@
 package og.ogstartracker.ui.screens
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
+import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
 import og.ogstartracker.ui.components.common.input.NotEmptyValidator
 import og.ogstartracker.ui.components.common.input.TextFieldState
 import og.ogstartracker.utils.VibratorController
@@ -16,6 +20,7 @@ import og.ogstartracker.utils.vibrationPatternThreeClick
 
 class DashboardViewModel internal constructor(
 	private val vibratorController: VibratorController,
+	private val startSiderealTracking: StartSiderealTrackingUseCase,
 ) : ViewModel() {
 
 	private val _uiState = MutableStateFlow(HomeUiState())
@@ -27,7 +32,9 @@ class DashboardViewModel internal constructor(
 
 	internal fun changeSidereal(active: Boolean) {
 		if (active) {
-			// TODO call arduino
+			viewModelScope.launch(Dispatchers.Default) {
+				startSiderealTracking()
+			}
 		} else {
 			// TODO call arduino
 		}
