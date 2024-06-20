@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import og.ogstartracker.Constants
 import og.ogstartracker.R
-import og.ogstartracker.events.PhotoControlEvent
+import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.ui.components.common.CustomSwitch
 import og.ogstartracker.ui.components.common.input.ActionInput
 import og.ogstartracker.ui.screens.HomeUiState

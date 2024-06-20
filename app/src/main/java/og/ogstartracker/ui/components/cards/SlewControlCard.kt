@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import og.ogstartracker.Constants
 import og.ogstartracker.R
-import og.ogstartracker.events.SlewControlEvent
+import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary

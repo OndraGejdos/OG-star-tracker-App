@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import og.ogstartracker.R
-import og.ogstartracker.events.PhotoControlEvent
-import og.ogstartracker.events.SlewControlEvent
+import og.ogstartracker.domain.events.PhotoControlEvent
+import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.ui.components.cards.ChecklistCard
 import og.ogstartracker.ui.components.cards.ConnectionCard
 import og.ogstartracker.ui.components.cards.PhotoControlCard

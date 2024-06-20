@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
-import og.ogstartracker.events.PhotoControlEvent
-import og.ogstartracker.events.SlewControlEvent
+import og.ogstartracker.domain.events.PhotoControlEvent
+import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.ui.components.common.input.NotEmptyValidator
 import og.ogstartracker.ui.components.common.input.TextFieldState
 import og.ogstartracker.utils.VibratorController
