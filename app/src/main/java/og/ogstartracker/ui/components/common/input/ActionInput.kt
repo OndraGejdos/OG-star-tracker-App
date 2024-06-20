@@ -1,11 +1,10 @@
-package og.ogstartracker.ui.components.common
+package og.ogstartracker.ui.components.common.input
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -22,11 +21,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import og.ogstartracker.ui.components.TextFieldState
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ShapeNormal
-import og.ogstartracker.ui.theme.textStyle12Bold
-import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
 
 @Composable

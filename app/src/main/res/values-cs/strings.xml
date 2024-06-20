@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">OG Star Tracker</string>
+	<string name="main_title">OG STAR TRACKER\nCONTROLLER</string>
+	<string name="checklist_title">Kontrolní seznam</string>
+	<string name="checklist_subtitle">Zkontrolujte, zda máte vše připravené</string>
+	<string name="checklist_items">• LEVEL YOUR TRIPOD\n• PUT CAMERA INTO STAR TRACKER\n• FIND SOME BRIGHT STAR AND SET FOCUS\n• INSERT LASER OR POLAR SCOPE\n• TARGET POLARIS (SET YOUR ALT AND AZIMUT)\n• MOVE CAMERA TO YOUR SHOOT TARGET\n• TURN ON SIDEREAL TRACKING\n• GO FOR IT</string>
+	<string name="connection_title">Připojení</string>
+	<string name="connection_connected">Připojeno</string>
+	<string name="connection_not_connected">Nepřipojeno</string>
+	<string name="connection_hint">Připojte se k WiFi: OG Star Tracker</string>
+	<string name="photo_control_title">Ovládání fotografií</string>
+	<string name="photo_control_subtitle">Zasílání automatizovaných příkazů do kamery</string>
+	<string name="photo_control_intervalometer">Nastavení intervalometru</string>
+	<string name="photo_control_exposure_length">Délka expozice</string>
+	<string name="photo_control_sec">sek</string>
+	<string name="photo_control_exposure_count">Počet expozic</string>
+	<string name="photo_control_dithering">nastavení DITHERINGu</string>
+	<string name="photo_control_dithering_enable">Zapnout dithering</string>
+	<string name="photo_control_dithering_subtitle">Přidat malé rozdíly v zaměření\nk potlačení šumu</string>
+	<string name="photo_control_focal_length">Ohnisková vzdálenost</string>
+	<string name="photo_control_mm">mm</string>
+	<string name="photo_control_pixel_size">Velikost pixelu</string>
+	<string name="photo_control_nm">nm</string>
+	<string name="photo_control_start_capture">Zapnout časosběr</string>
+	<string name="photo_control_end_capture">Ukončit časosběr</string>
+	<string name="photo_control_taken_exposures">Počet provedených expozic</string>
+	<string name="photo_control_taken_exposures_value">%d/%d</string>
+	<string name="photo_control_elapsed_time">Uběhnutý čas</string>
+	<string name="photo_control_elapsed_time_hour">h</string>
+	<string name="photo_control_elapsed_time_minute">m</string>
+	<string name="photo_control_elapsed_time_second">s</string>
+	<string name="sidereal_tracking_title">Siderické sledování</string>
+	<string name="sidereal_tracking_subtitle">Kompenzovat otáčení Země</string>
+	<string name="slew_control_title">Řízení otáčení</string>
+	<string name="slew_control_subtitle">Manuální otáčení sledovače</string>
+	<string name="slew_control_step_size">Velikost kroku</string>
+	<string name="slew_control_move">Pohnout</string>
+	<string name="slew_control_acw">Proti směru</string>
+	<string name="slew_control_cw">Po směru</string>
+
+
+</resources>

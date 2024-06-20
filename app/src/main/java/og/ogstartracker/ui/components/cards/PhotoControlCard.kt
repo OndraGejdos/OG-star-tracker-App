@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.ui.components.cards
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -22,13 +22,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import og.ogstartracker.Constants
 import og.ogstartracker.R
-import og.ogstartracker.drawColoredShadow
-import og.ogstartracker.ui.components.common.ActionInput
+import og.ogstartracker.events.PhotoControlEvent
+import og.ogstartracker.ui.components.common.CustomSwitch
+import og.ogstartracker.ui.components.common.input.ActionInput
 import og.ogstartracker.ui.screens.HomeUiState
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
@@ -44,6 +47,8 @@ import og.ogstartracker.ui.theme.textStyle12Bold
 import og.ogstartracker.ui.theme.textStyle14Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
+import og.ogstartracker.utils.drawColoredShadow
+import og.ogstartracker.utils.drawShadow
 
 @Composable
 fun PhotoControlCard(
@@ -55,17 +60,11 @@ fun PhotoControlCard(
 		modifier = modifier
 			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawColoredShadow(
-				color = ColorShadow,
-				alpha = 1f,
-				borderRadius = 12.dp,
-				spread = 4.dp,
-				blurRadius = 12.dp,
-			)
+			.drawShadow()
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.animateContentSize()
-			.alpha(1f.takeIf { uiState.trackerConnected } ?: 0.5f)
+			.alpha(Constants.Percent._100.takeIf { uiState.trackerConnected } ?: Constants.Percent._50)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -84,12 +83,12 @@ fun PhotoControlCard(
 				modifier = Modifier.weight(1f)
 			) {
 				Text(
-					text = "Photo control".uppercase(),
+					text = stringResource(id = R.string.photo_control_title).uppercase(),
 					style = textStyle16Bold,
 					color = AppTheme.colorScheme.primary
 				)
 				Text(
-					text = "Send automated commands to your camera",
+					text = stringResource(id = R.string.photo_control_subtitle),
 					style = textStyle10ItalicBold,
 					color = AppTheme.colorScheme.secondary
 				)
@@ -97,7 +96,7 @@ fun PhotoControlCard(
 		}
 
 		Text(
-			text = "INTERVALOMETER SETTINGS".uppercase(),
+			text = stringResource(id = R.string.photo_control_intervalometer).uppercase(),
 			style = textStyle14Bold,
 			color = AppTheme.colorScheme.secondary,
 			modifier = Modifier.padding(horizontal = DimensNormal100)
@@ -111,13 +110,13 @@ fun PhotoControlCard(
 			ActionInput(
 				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				textFieldState = uiState.exposeTime,
-				label = "Exposure length",
+				label = stringResource(id = R.string.photo_control_exposure_length),
 				placeholder = "0",
 				imeAction = ImeAction.Next,
 				keyboardType = KeyboardType.Number,
 				trailingIcon = {
 					Text(
-						"sec",
+						text = stringResource(id = R.string.photo_control_sec),
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
@@ -127,7 +126,7 @@ fun PhotoControlCard(
 				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.frameCount,
-				label = "Number of exposures",
+				label = stringResource(id = R.string.photo_control_exposure_count),
 				placeholder = "0",
 				imeAction = ImeAction.Done,
 				keyboardType = KeyboardType.Number
@@ -141,7 +140,7 @@ fun PhotoControlCard(
 		)
 
 		Text(
-			text = "DITHERING SETTINGS".uppercase(),
+			text = stringResource(id = R.string.photo_control_dithering).uppercase(),
 			style = textStyle14Bold,
 			color = AppTheme.colorScheme.secondary,
 			modifier = Modifier
@@ -158,12 +157,12 @@ fun PhotoControlCard(
 					.padding(start = DimensNormal100)
 			) {
 				Text(
-					text = "enable dithering".uppercase(),
+					text = stringResource(id = R.string.photo_control_dithering_enable).uppercase(),
 					style = textStyle16Bold,
 					color = ColorPrimary
 				)
 				Text(
-					text = "Introduce small differences in targeting\nto suppress noise",
+					text = stringResource(id = R.string.photo_control_dithering_subtitle),
 					style = textStyle10ItalicBold,
 					color = ColorSecondary
 				)
@@ -187,13 +186,13 @@ fun PhotoControlCard(
 			ActionInput(
 				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				textFieldState = uiState.ditherFocalLength,
-				label = "Focal length",
+				label = stringResource(id = R.string.photo_control_focal_length),
 				placeholder = "0",
 				imeAction = ImeAction.Next,
 				keyboardType = KeyboardType.Number,
 				trailingIcon = {
 					Text(
-						"mm",
+						stringResource(id = R.string.photo_control_mm),
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
@@ -203,13 +202,13 @@ fun PhotoControlCard(
 				enabled = !uiState.capturingActive && uiState.trackerConnected,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.ditherPixelSize,
-				label = "Pixel size",
+				label = stringResource(id = R.string.photo_control_pixel_size),
 				placeholder = "0",
 				imeAction = ImeAction.Done,
 				keyboardType = KeyboardType.Number,
 				trailingIcon = {
 					Text(
-						"nm",
+						stringResource(id = R.string.photo_control_nm),
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
@@ -250,7 +249,7 @@ fun PhotoControlCard(
 				enabled = !uiState.capturingActive && uiState.trackerConnected,
 			) {
 				Text(
-					text = "Start capture".uppercase(),
+					text = stringResource(id = R.string.photo_control_start_capture).uppercase(),
 					style = textStyle14Bold,
 					color = AppTheme.colorScheme.background
 				)
@@ -271,7 +270,7 @@ fun PhotoControlCard(
 				enabled = uiState.capturingActive && uiState.trackerConnected,
 			) {
 				Text(
-					text = "End capture".uppercase(),
+					text = stringResource(id = R.string.photo_control_end_capture).uppercase(),
 					style = textStyle14Bold,
 					color = AppTheme.colorScheme.background
 				)
@@ -290,12 +289,12 @@ private fun CaptureInfo() {
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Text(
-			text = "Number of exposures taken".uppercase(),
+			text = stringResource(id = R.string.photo_control_exposure_count).uppercase(),
 			style = textStyle12Bold,
 			color = AppTheme.colorScheme.secondary
 		)
 		Text(
-			text = "20/300",
+			text = stringResource(id = R.string.photo_control_taken_exposures_value, 14, 100),
 			style = textStyle16Bold,
 			color = AppTheme.colorScheme.secondary
 		)
@@ -310,12 +309,21 @@ private fun CaptureInfo() {
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Text(
-			text = "Elapsed time".uppercase(),
+			text = stringResource(id = R.string.photo_control_elapsed_time).uppercase(),
 			style = textStyle12Bold,
 			color = AppTheme.colorScheme.secondary
 		)
 		Text(
-			text = "0h 14m 41s",
+			text = buildString {
+				append("0")
+				append(stringResource(id = R.string.photo_control_elapsed_time_hour))
+				append(" ")
+				append("14")
+				append(stringResource(id = R.string.photo_control_elapsed_time_minute))
+				append(" ")
+				append("35")
+				append(stringResource(id = R.string.photo_control_elapsed_time_second))
+			},
 			style = textStyle16Bold,
 			color = AppTheme.colorScheme.secondary
 		)

@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.events
 
 sealed class SlewControlEvent {
 

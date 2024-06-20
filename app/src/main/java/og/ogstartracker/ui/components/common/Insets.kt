@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.ui.components.common
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues

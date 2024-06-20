@@ -12,25 +12,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import og.ogstartracker.SystemUiHelper
-import og.ogstartracker.ui.components.ChecklistCard
-import og.ogstartracker.ui.components.ConnectionCard
-import og.ogstartracker.ui.components.LocalInsets
-import og.ogstartracker.ui.components.PhotoControlCard
-import og.ogstartracker.ui.components.PhotoControlEvent
-import og.ogstartracker.ui.components.SiderealCard
-import og.ogstartracker.ui.components.SlewControlCard
-import og.ogstartracker.ui.components.SlewControlEvent
+import og.ogstartracker.R
+import og.ogstartracker.events.PhotoControlEvent
+import og.ogstartracker.events.SlewControlEvent
+import og.ogstartracker.ui.components.cards.ChecklistCard
+import og.ogstartracker.ui.components.cards.ConnectionCard
+import og.ogstartracker.ui.components.cards.PhotoControlCard
+import og.ogstartracker.ui.components.cards.SiderealCard
+import og.ogstartracker.ui.components.cards.SlewControlCard
+import og.ogstartracker.ui.components.common.LocalInsets
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.DimensNormal200
 import og.ogstartracker.ui.theme.DimensSmall100
 import og.ogstartracker.ui.theme.textStyle20Bold
+import og.ogstartracker.utils.SystemUiHelper
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -86,7 +87,6 @@ private fun DashboardScreenLayout(
 	modifier: Modifier = Modifier,
 ) {
 	val state = rememberLazyListState()
-	val scope = rememberCoroutineScope()
 
 	LazyColumn(
 		state = state,
@@ -100,7 +100,7 @@ private fun DashboardScreenLayout(
 				modifier = Modifier
 					.fillMaxWidth()
 					.padding(vertical = DimensSmall100),
-				text = "OG STAR TRACKER\nCONTROLLER",
+				text = stringResource(id = R.string.main_title),
 				style = textStyle20Bold,
 				textAlign = TextAlign.Center,
 				color = AppTheme.colorScheme.primary,

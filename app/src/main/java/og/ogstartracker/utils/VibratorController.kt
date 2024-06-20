@@ -17,7 +17,9 @@ import androidx.core.content.getSystemService
  * create VibrationEffect on Android SDK O+ devices. On older devices it is used directly.
  * @author [David Sucharda](mailto:david.sucharda@cleevio.com)
  */
-class VibratorController {
+class VibratorController constructor(
+	private val context: Context,
+) {
 
 	private var vibrator: Vibrator? = null
 	private var vibratorManager: VibratorManager? = null
@@ -28,11 +30,11 @@ class VibratorController {
 	 *
 	 * @param context is used to initialize [vibratorManager] or [vibrator] based on the SDK version
 	 */
-	fun startVibrations(context: Context, vibrationPattern: LongArray) {
+	fun startVibrations(vibrationPattern: LongArray) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			startVibrationsOnS(context, vibrationPattern)
+			startVibrationsOnS(vibrationPattern)
 		} else {
-			startVibrationsPreS(context, vibrationPattern)
+			startVibrationsPreS(vibrationPattern)
 		}
 	}
 
@@ -43,11 +45,11 @@ class VibratorController {
 	 * @param context is used to initialize [vibratorManager] or [vibrator] based on the SDK version
 	 */
 	@Suppress("unused")
-	fun stopVibrations(context: Context) {
+	fun stopVibrations() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			stopVibrationOnS(context)
+			stopVibrationOnS()
 		} else {
-			stopVibrationsPreS(context)
+			stopVibrationsPreS()
 		}
 	}
 
@@ -59,7 +61,7 @@ class VibratorController {
 	 */
 	@SuppressLint("MissingPermission")
 	@RequiresApi(Build.VERSION_CODES.S)
-	private fun startVibrationsOnS(context: Context, vibrationPattern: LongArray) {
+	private fun startVibrationsOnS(vibrationPattern: LongArray) {
 		if (vibratorManager == null) {
 			vibratorManager = context.getSystemService()
 		}
@@ -79,7 +81,7 @@ class VibratorController {
 	 * @param context is used to initialize [vibrator]
 	 */
 	@SuppressLint("MissingPermission")
-	private fun startVibrationsPreS(context: Context, vibrationPattern: LongArray) {
+	private fun startVibrationsPreS(vibrationPattern: LongArray) {
 		if (vibrator == null) {
 			vibrator = context.getSystemService()
 		}
@@ -98,7 +100,7 @@ class VibratorController {
 	 */
 	@SuppressLint("MissingPermission")
 	@RequiresApi(Build.VERSION_CODES.S)
-	private fun stopVibrationOnS(context: Context) {
+	private fun stopVibrationOnS() {
 		if (vibratorManager == null) {
 			vibratorManager = context.getSystemService()
 		}
@@ -112,7 +114,7 @@ class VibratorController {
 	 * @param context is used to initialize [vibrator]
 	 */
 	@SuppressLint("MissingPermission")
-	private fun stopVibrationsPreS(context: Context) {
+	private fun stopVibrationsPreS() {
 		if (vibrator == null) {
 			vibrator = context.getSystemService()
 		}

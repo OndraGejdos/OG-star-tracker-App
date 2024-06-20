@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.ui.components.common.input
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

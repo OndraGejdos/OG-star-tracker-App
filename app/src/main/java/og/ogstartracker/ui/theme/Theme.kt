@@ -21,6 +21,7 @@ val DarkColorScheme = AppColorScheme(
 	),
 	background = ColorBackground,
 	primary = ColorPrimary,
+	primaryAlpha50 = ColorPrimary.copy(alpha = 0.5f),
 	secondary = ColorSecondary,
 	shadow = ColorShadow
 )
@@ -60,6 +61,7 @@ data class AppColorScheme constructor(
 	val material: ColorScheme,
 	val background: Color,
 	val primary: Color,
+	val primaryAlpha50: Color,
 	val secondary: Color,
 	val shadow: Color
 )

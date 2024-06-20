@@ -1,4 +1,4 @@
-package og.ogstartracker
+package og.ogstartracker.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

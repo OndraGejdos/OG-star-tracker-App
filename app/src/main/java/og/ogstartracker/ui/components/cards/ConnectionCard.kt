@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.ui.components.cards
 
 import android.content.Intent
 import android.provider.Settings
@@ -21,10 +21,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import og.ogstartracker.R
-import og.ogstartracker.drawColoredShadow
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
@@ -35,6 +35,8 @@ import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle24Bold
+import og.ogstartracker.utils.drawColoredShadow
+import og.ogstartracker.utils.drawShadow
 
 @Composable
 fun ConnectionCard(
@@ -48,13 +50,7 @@ fun ConnectionCard(
 		modifier = modifier
 			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawColoredShadow(
-				color = ColorShadow,
-				alpha = 1f,
-				borderRadius = 12.dp,
-				spread = 4.dp,
-				blurRadius = 12.dp,
-			)
+			.drawShadow()
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.clickable(
@@ -87,22 +83,22 @@ fun ConnectionCard(
 				modifier = Modifier.weight(1f)
 			) {
 				Text(
-					text = "Connection".uppercase(),
+					text = stringResource(id = R.string.connection_title).uppercase(),
 					style = textStyle10ItalicBold,
 					color = AppTheme.colorScheme.secondary
 				)
 				Text(
 					text = if (connected) {
-						"Connected"
+						stringResource(id = R.string.connection_connected)
 					} else {
-						"Not connected"
+						stringResource(id = R.string.connection_not_connected)
 					},
 					style = textStyle24Bold,
 					color = AppTheme.colorScheme.primary
 				)
 				if (!connected) {
 					Text(
-						text = "Connect to WiFi: OG Star Tracker",
+						text = stringResource(id = R.string.connection_hint),
 						style = textStyle10ItalicBold,
 						color = ColorSecondary
 					)

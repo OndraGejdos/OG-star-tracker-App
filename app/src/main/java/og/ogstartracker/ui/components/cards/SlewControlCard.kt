@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.ui.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,15 +23,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import og.ogstartracker.Constants
 import og.ogstartracker.R
-import og.ogstartracker.drawColoredShadow
+import og.ogstartracker.events.SlewControlEvent
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
-import og.ogstartracker.ui.theme.ColorShadow
 import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.DimensNormal150
 import og.ogstartracker.ui.theme.DimensNormal200
@@ -45,6 +46,7 @@ import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle12Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle20Bold
+import og.ogstartracker.utils.drawShadow
 
 @Composable
 fun SlewControlCard(
@@ -57,16 +59,10 @@ fun SlewControlCard(
 		modifier = modifier
 			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawColoredShadow(
-				color = ColorShadow,
-				alpha = 1f,
-				borderRadius = 12.dp,
-				spread = 4.dp,
-				blurRadius = 12.dp,
-			)
+			.drawShadow()
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
-			.alpha(1f.takeIf { enabled } ?: 0.5f)
+			.alpha(Constants.Percent._100.takeIf { enabled } ?: Constants.Percent._50)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -85,12 +81,12 @@ fun SlewControlCard(
 				modifier = Modifier.weight(1f)
 			) {
 				Text(
-					text = "Slew control".uppercase(),
+					text = stringResource(id = R.string.slew_control_title).uppercase(),
 					style = textStyle16Bold,
 					color = AppTheme.colorScheme.primary
 				)
 				Text(
-					text = "Manually rotate tracker",
+					text = stringResource(id = R.string.slew_control_subtitle),
 					style = textStyle10ItalicBold,
 					color = AppTheme.colorScheme.secondary
 				)
@@ -101,7 +97,7 @@ fun SlewControlCard(
 			verticalAlignment = Alignment.CenterVertically
 		) {
 			Text(
-				text = "Step size".uppercase(),
+				text = stringResource(id = R.string.slew_control_step_size).uppercase(),
 				style = textStyle10Bold,
 				color = AppTheme.colorScheme.secondary,
 				modifier = Modifier
@@ -153,7 +149,7 @@ fun SlewControlCard(
 			),
 		) {
 			Text(
-				text = "Move".uppercase(),
+				text = stringResource(id = R.string.slew_control_move).uppercase(),
 				style = textStyle10Bold,
 				color = AppTheme.colorScheme.secondary,
 				modifier = Modifier
@@ -179,7 +175,7 @@ fun SlewControlCard(
 			) {
 				Row(verticalAlignment = Alignment.CenterVertically) {
 					Text(
-						text = "anticlockwise",
+						text = stringResource(id = R.string.slew_control_acw),
 						style = textStyle12Bold
 					)
 					Icon(
@@ -210,7 +206,7 @@ fun SlewControlCard(
 			) {
 				Row(verticalAlignment = Alignment.CenterVertically) {
 					Text(
-						text = "clockwise",
+						text = stringResource(id = R.string.slew_control_cw),
 						style = textStyle12Bold
 					)
 					Icon(

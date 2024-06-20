@@ -1,11 +1,11 @@
-package og.ogstartracker
+package og.ogstartracker.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
-import og.ogstartracker.ui.components.ProvidesInsets
+import og.ogstartracker.ui.components.common.ProvidesInsets
 import og.ogstartracker.ui.screens.DashboardScreen
 import og.ogstartracker.ui.theme.AppTheme
 

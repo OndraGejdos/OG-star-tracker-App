@@ -1,4 +1,4 @@
-package og.ogstartracker
+package og.ogstartracker.utils
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.scale
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import og.ogstartracker.ui.theme.ColorShadow
 
 // source https://www.reddit.com/r/androiddev/comments/tdva2j/is_there_a_boxshadow_effect_in_compose/
 fun Modifier.drawColoredShadow(
@@ -63,4 +64,14 @@ fun Modifier.drawColoredShadow(
 	}
 } else {
 	this
+}
+
+fun Modifier.drawShadow(): Modifier {
+	return this.drawColoredShadow(
+		color = ColorShadow,
+		alpha = 1f,
+		borderRadius = 12.dp,
+		spread = 4.dp,
+		blurRadius = 12.dp,
+	)
 }

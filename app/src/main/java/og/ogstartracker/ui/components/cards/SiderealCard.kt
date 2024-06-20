@@ -1,4 +1,4 @@
-package og.ogstartracker.ui.components
+package og.ogstartracker.ui.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,10 +15,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import og.ogstartracker.Constants
 import og.ogstartracker.R
-import og.ogstartracker.drawColoredShadow
+import og.ogstartracker.ui.components.common.CustomSwitch
+import og.ogstartracker.utils.drawColoredShadow
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
@@ -29,6 +32,7 @@ import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle16Bold
+import og.ogstartracker.utils.drawShadow
 
 @Composable
 fun SiderealCard(
@@ -41,16 +45,11 @@ fun SiderealCard(
 		modifier = modifier
 			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawColoredShadow(
-				color = ColorShadow,
-				alpha = 1f,
-				borderRadius = 12.dp,
-				spread = 4.dp,
-				blurRadius = 12.dp,
-			)
+			.drawShadow()
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
-			.alpha(1f.takeIf { enabled } ?: 0.5f)
+			.alpha(Constants.Percent._100.takeIf { enabled } ?: Constants.Percent._50)
+
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -69,12 +68,12 @@ fun SiderealCard(
 				modifier = Modifier.weight(1f)
 			) {
 				Text(
-					text = "Sidereal tracking".uppercase(),
+					text = stringResource(id = R.string.sidereal_tracking_title).uppercase(),
 					style = textStyle16Bold,
 					color = ColorPrimary
 				)
 				Text(
-					text = "Compensate for Earth’s rotation",
+					text = stringResource(id = R.string.sidereal_tracking_subtitle),
 					style = textStyle10ItalicBold,
 					color = ColorSecondary
 				)
