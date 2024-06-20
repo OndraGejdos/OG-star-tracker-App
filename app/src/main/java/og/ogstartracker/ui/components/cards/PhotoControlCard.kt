@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,7 +40,9 @@ import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.ColorSecondary
 import og.ogstartracker.ui.theme.ColorShadow
 import og.ogstartracker.ui.theme.DimensNormal100
+import og.ogstartracker.ui.theme.DimensNormal150
 import og.ogstartracker.ui.theme.DimensSmall100
+import og.ogstartracker.ui.theme.DimensSmall25
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
@@ -252,6 +255,13 @@ fun PhotoControlCard(
 					text = stringResource(id = R.string.photo_control_start_capture).uppercase(),
 					style = textStyle14Bold,
 					color = AppTheme.colorScheme.background
+				)
+				Icon(
+					painter = painterResource(id = R.drawable.ic_camera),
+					contentDescription = null,
+					modifier = Modifier
+						.size(DimensNormal150)
+						.padding(start = DimensSmall25)
 				)
 			}
 

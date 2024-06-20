@@ -4,7 +4,7 @@
 	<string name="main_title">OG STAR TRACKER\nOvladač</string>
 	<string name="checklist_title">Kontrolní seznam</string>
 	<string name="checklist_subtitle">Zkontrolujte, zda máte vše připravené</string>
-	<string name="checklist_items">• LEVEL YOUR TRIPOD\n• PUT CAMERA INTO STAR TRACKER\n• FIND SOME BRIGHT STAR AND SET FOCUS\n• INSERT LASER OR POLAR SCOPE\n• TARGET POLARIS (SET YOUR ALT AND AZIMUT)\n• MOVE CAMERA TO YOUR SHOOT TARGET\n• TURN ON SIDEREAL TRACKING\n• GO FOR IT</string>
+	<string name="checklist_items">• vyrovnej trojnožku\n• vlož kameru do trackeru\n• najdi jasnou  hvězku a naostři\n• vlož laser nebo polární hledáček\n• zaměř Polárku (nastav zem šírku a azimut)\n• zaměř kameru na cílený objekt\n• zatpni siderické sledování\n• foť</string>
 	<string name="connection_title">Připojení</string>
 	<string name="connection_connected">Připojeno</string>
 	<string name="connection_not_connected">Nepřipojeno</string>
@@ -16,14 +16,14 @@
 	<string name="photo_control_sec">sek</string>
 	<string name="photo_control_exposure_count">Počet expozic</string>
 	<string name="photo_control_dithering">nastavení DITHERINGu</string>
-	<string name="photo_control_dithering_enable">Zapnout dithering</string>
+	<string name="photo_control_dithering_enable">Aktivovat dithering</string>
 	<string name="photo_control_dithering_subtitle">Přidat malé rozdíly v zaměření\nk potlačení šumu</string>
 	<string name="photo_control_focal_length">Ohnisková vzdálenost</string>
 	<string name="photo_control_mm">mm</string>
 	<string name="photo_control_pixel_size">Velikost pixelu</string>
 	<string name="photo_control_nm">nm</string>
-	<string name="photo_control_start_capture">Zapnout časosběr</string>
-	<string name="photo_control_end_capture">Ukončit časosběr</string>
+	<string name="photo_control_start_capture">Zapnout</string>
+	<string name="photo_control_end_capture">Ukončit</string>
 	<string name="photo_control_taken_exposures">Počet provedených expozic</string>
 	<string name="photo_control_taken_exposures_value">%d/%d</string>
 	<string name="photo_control_elapsed_time">Uběhnutý čas</string>

@@ -121,7 +121,7 @@ fun ChecklistCard(
 
 		if (opened) {
 			Text(
-				text = stringResource(id = R.string.checklist_items),
+				text = stringResource(id = R.string.checklist_items).uppercase(),
 				style = textStyle10Bold.copy(lineHeight = 22.sp),
 				color = AppTheme.colorScheme.secondary,
 				modifier = Modifier.padding(

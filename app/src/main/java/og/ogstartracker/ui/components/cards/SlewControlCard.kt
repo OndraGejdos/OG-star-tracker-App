@@ -34,6 +34,7 @@ import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.DimensNormal100
+import og.ogstartracker.ui.theme.DimensNormal125
 import og.ogstartracker.ui.theme.DimensNormal150
 import og.ogstartracker.ui.theme.DimensNormal200
 import og.ogstartracker.ui.theme.DimensSmall100
@@ -43,7 +44,6 @@ import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10Bold
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
-import og.ogstartracker.ui.theme.textStyle12Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle20Bold
 import og.ogstartracker.utils.drawShadow
@@ -145,7 +145,7 @@ fun SlewControlCard(
 			modifier = Modifier.padding(
 				end = DimensNormal100,
 				bottom = DimensNormal100,
-				top = DimensSmall100
+				top = DimensNormal125
 			),
 		) {
 			Text(
@@ -162,7 +162,7 @@ fun SlewControlCard(
 				onClick = {
 					slewControlCommands(SlewControlEvent.RotateAnticlockwise)
 				},
-				contentPadding = PaddingValues(horizontal = DimensSmall125),
+				contentPadding = PaddingValues(horizontal = DimensNormal150),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = AppTheme.colorScheme.primary,
 					contentColor = AppTheme.colorScheme.background,
@@ -174,10 +174,6 @@ fun SlewControlCard(
 					.height(40.dp)
 			) {
 				Row(verticalAlignment = Alignment.CenterVertically) {
-					Text(
-						text = stringResource(id = R.string.slew_control_acw),
-						style = textStyle12Bold
-					)
 					Icon(
 						painter = painterResource(id = R.drawable.ic_restore),
 						contentDescription = null,
@@ -193,9 +189,7 @@ fun SlewControlCard(
 				onClick = {
 					slewControlCommands(SlewControlEvent.RotateClockwise)
 				},
-				contentPadding = PaddingValues(
-					horizontal = DimensSmall125,
-				),
+				contentPadding = PaddingValues(horizontal = DimensNormal150),
 				colors = ButtonDefaults.buttonColors(
 					containerColor = AppTheme.colorScheme.primary,
 					contentColor = AppTheme.colorScheme.background,
@@ -205,10 +199,6 @@ fun SlewControlCard(
 				modifier = Modifier.height(40.dp),
 			) {
 				Row(verticalAlignment = Alignment.CenterVertically) {
-					Text(
-						text = stringResource(id = R.string.slew_control_cw),
-						style = textStyle12Bold
-					)
 					Icon(
 						painter = painterResource(id = R.drawable.ic_restore),
 						contentDescription = null,
