@@ -21,6 +21,7 @@ koin = "3.5.6"
 material = "1.12.0"
 kotlinKsp = "1.9.22-1.0.17"
 jetbrainsKotlinJvm = "1.9.22"
+splashScreen = "1.1.0-alpha02"
 gradle = "8.4.0-rc02"
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 navigationCompose = "2.7.7"
@@ -51,6 +52,7 @@ koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koinCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

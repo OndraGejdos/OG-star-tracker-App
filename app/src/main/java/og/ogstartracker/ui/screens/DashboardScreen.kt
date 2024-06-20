@@ -100,7 +100,7 @@ private fun DashboardScreenLayout(
 				modifier = Modifier
 					.fillMaxWidth()
 					.padding(vertical = DimensSmall100),
-				text = stringResource(id = R.string.main_title),
+				text = stringResource(id = R.string.main_title).uppercase(),
 				style = textStyle20Bold,
 				textAlign = TextAlign.Center,
 				color = AppTheme.colorScheme.primary,

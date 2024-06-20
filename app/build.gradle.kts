@@ -48,9 +48,11 @@ dependencies {
 	implementation(libs.androidx.ui)
 	implementation(libs.androidx.ui.graphics)
 	implementation(libs.androidx.ui.tooling.preview)
+	implementation(libs.material)
 	implementation(libs.androidx.material3)
 	implementation(libs.androidx.navigation.runtime.ktx)
 	implementation(libs.androidx.navigation.compose)
+	implementation(libs.splashScreen)
 	debugImplementation(libs.androidx.ui.tooling)
 
 	implementation(libs.koinCore)
