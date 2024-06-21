@@ -29,14 +29,12 @@ import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.ColorSecondary
-import og.ogstartracker.ui.theme.ColorShadow
 import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle24Bold
-import og.ogstartracker.utils.drawColoredShadow
-import og.ogstartracker.utils.drawShadow
+import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun ConnectionCard(
@@ -48,9 +46,9 @@ fun ConnectionCard(
 
 	Column(
 		modifier = modifier
-			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawShadow()
+			.segmentedShadow(AppTheme.colorScheme.shadow)
+			.padding(DimensNormal100)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.clickable(

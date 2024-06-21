@@ -39,7 +39,7 @@ import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10Bold
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle16Bold
-import og.ogstartracker.utils.drawShadow
+import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun ChecklistCard(
@@ -60,9 +60,9 @@ fun ChecklistCard(
 
 	Column(
 		modifier = modifier
-			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawShadow()
+			.segmentedShadow(AppTheme.colorScheme.shadow)
+			.padding(DimensNormal100)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.clickable(

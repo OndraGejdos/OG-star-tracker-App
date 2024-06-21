@@ -1,5 +1,11 @@
 package og.ogstartracker.ui.components.cards
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -17,22 +24,19 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import og.ogstartracker.Constants
 import og.ogstartracker.R
 import og.ogstartracker.ui.components.common.CustomSwitch
-import og.ogstartracker.utils.drawColoredShadow
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.ColorSecondary
-import og.ogstartracker.ui.theme.ColorShadow
 import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle16Bold
-import og.ogstartracker.utils.drawShadow
+import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun SiderealCard(
@@ -41,15 +45,24 @@ fun SiderealCard(
 	onCheckChanged: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
+	val infiniteTransition = rememberInfiniteTransition(label = "")
+	val color by infiniteTransition.animateColor(
+		initialValue = AppTheme.colorScheme.shadow,
+		targetValue = AppTheme.colorScheme.primary,
+		animationSpec = infiniteRepeatable(
+			animation = tween(500, 0, FastOutLinearInEasing),
+			repeatMode = RepeatMode.Reverse
+		), label = ""
+	)
+
 	Column(
 		modifier = modifier
-			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawShadow()
+			.segmentedShadow(color.takeIf { active } ?: AppTheme.colorScheme.shadow)
+			.padding(DimensNormal100)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.alpha(Constants.Percent._100.takeIf { enabled } ?: Constants.Percent._50)
-
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,

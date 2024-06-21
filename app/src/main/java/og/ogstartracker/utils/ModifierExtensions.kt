@@ -1,77 +1,58 @@
 package og.ogstartracker.utils
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.scale
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import og.ogstartracker.ui.theme.ColorShadow
+import og.ogstartracker.ui.theme.AppTheme
+import og.ogstartracker.ui.theme.DimensNormal100
 
-// source https://www.reddit.com/r/androiddev/comments/tdva2j/is_there_a_boxshadow_effect_in_compose/
-fun Modifier.drawColoredShadow(
-	color: Color = Color.Black,
-	alpha: Float = 0.07f,
-	borderRadius: Dp = 0.dp,
-	offsetX: Dp = 0.dp,
-	offsetY: Dp = 0.dp,
-	blurRadius: Dp = 7.dp,
-	spread: Dp = 0.dp,
-	enabled: Boolean = true,
-) = if (enabled) {
-	this.drawBehind {
-		val transparentColor = color.copy(alpha = 0.0f).toArgb()
-		val shadowColor = color.copy(alpha = alpha).toArgb()
-		this.drawIntoCanvas {
-			val paint = Paint()
-			val frameworkPaint = paint.asFrameworkPaint()
-			frameworkPaint.color = transparentColor
-			frameworkPaint.setShadowLayer(
-				blurRadius.toPx(),
-				offsetX.toPx(),
-				offsetY.toPx(),
-				shadowColor
-			)
-			it.save()
+fun Modifier.segmentedShadow(
+	color: Color,
+	layers: Int = 5,
+	shadowWidth: Dp = DimensNormal100
+): Modifier {
+	return this.drawBehind {
+		val shadowSize = shadowWidth.toPx()
+		val size = shadowSize / layers
 
-			if (spread.value > 0) {
-				fun calcSpreadScale(spread: Float, childSize: Float): Float {
-					return 1f + ((spread / childSize) * 2f)
-				}
-
-				it.scale(
-					calcSpreadScale(spread.toPx(), this.size.width),
-					calcSpreadScale(spread.toPx(), this.size.height),
-					this.center.x,
-					this.center.y
+		repeat(layers) {
+			drawRoundRect(
+				style = Stroke(width = size),
+				color = color.copy(alpha = 1f - (1 / layers.toFloat()) * it),
+				topLeft = Offset(
+					shadowSize - it * size,
+					shadowSize - it * size
+				),
+				cornerRadius = CornerRadius(shadowSize + it * size),
+				size = Size(
+					this.size.width - shadowSize * 2 + size * it * 2,
+					this.size.height - shadowSize * 2 + size * it * 2
 				)
-			}
-
-			it.drawRoundRect(
-				0f,
-				0f,
-				this.size.width,
-				this.size.height,
-				borderRadius.toPx(),
-				borderRadius.toPx(),
-				paint
 			)
-			it.restore()
 		}
 	}
-} else {
-	this
 }
 
-fun Modifier.drawShadow(): Modifier {
-	return this.drawColoredShadow(
-		color = ColorShadow,
-		alpha = 1f,
-		borderRadius = 12.dp,
-		spread = 4.dp,
-		blurRadius = 12.dp,
-	)
+@Preview
+@Composable
+fun AsdPreview() {
+	AppTheme {
+		Box(
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(200.dp)
+				.segmentedShadow(AppTheme.colorScheme.primary)
+		)
+	}
 }

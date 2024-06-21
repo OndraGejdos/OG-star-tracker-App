@@ -11,7 +11,12 @@ import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
+import og.ogstartracker.domain.usecases.AbortCaptureUseCase
+import og.ogstartracker.domain.usecases.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
+import og.ogstartracker.domain.usecases.StopSiderealTrackingUseCase
+import og.ogstartracker.domain.usecases.TurnTrackerLeftUseCase
+import og.ogstartracker.domain.usecases.TurnTrackerRightUseCase
 import og.ogstartracker.ui.components.common.input.NotEmptyValidator
 import og.ogstartracker.ui.components.common.input.TextFieldState
 import og.ogstartracker.utils.VibratorController
@@ -21,6 +26,11 @@ import og.ogstartracker.utils.vibrationPatternThreeClick
 class DashboardViewModel internal constructor(
 	private val vibratorController: VibratorController,
 	private val startSiderealTracking: StartSiderealTrackingUseCase,
+	private val stopSiderealTracking: StopSiderealTrackingUseCase,
+	private val trackerLeft: TurnTrackerLeftUseCase,
+	private val trackerRight: TurnTrackerRightUseCase,
+	private val startCapture: StartCaptureUseCase,
+	private val abortCapture: AbortCaptureUseCase,
 ) : ViewModel() {
 
 	private val _uiState = MutableStateFlow(HomeUiState())
@@ -32,20 +42,14 @@ class DashboardViewModel internal constructor(
 
 	internal fun changeSidereal(active: Boolean) {
 		if (active) {
-			viewModelScope.launch(Dispatchers.Default) {
-				startSiderealTracking()
-			}
+			sendCommand { startSiderealTracking() }
+			vibratorController.startVibrations(vibrationPatternThreeClick)
 		} else {
-			// TODO call arduino
+			sendCommand { stopSiderealTracking() }
+			vibratorController.startVibrations(vibrationPatternClick)
 		}
 
 		_uiState.update { it.copy(siderealActive = active) }
-
-		if (active) {
-			vibratorController.startVibrations(vibrationPatternThreeClick)
-		} else {
-			vibratorController.startVibrations(vibrationPatternClick)
-		}
 	}
 
 	fun slewControlEvent(slewControlEvent: SlewControlEvent) {
@@ -65,12 +69,12 @@ class DashboardViewModel internal constructor(
 			}
 
 			SlewControlEvent.RotateAnticlockwise -> {
-				// TODO call arduino
+				sendCommand { trackerLeft() }
 				vibratorController.startVibrations(vibrationPatternClick)
 			}
 
 			SlewControlEvent.RotateClockwise -> {
-				// TODO call arduino
+				sendCommand { trackerRight }
 				vibratorController.startVibrations(vibrationPatternClick)
 			}
 		}
@@ -90,16 +94,22 @@ class DashboardViewModel internal constructor(
 			}
 
 			PhotoControlEvent.EndCapture -> {
-				// TODO call arduino
-				_uiState.update { it.copy(capturingActive = false) }
+				sendCommand { abortCapture() }
 				vibratorController.startVibrations(vibrationPatternClick)
+				_uiState.update { it.copy(capturingActive = false) }
 			}
 
 			PhotoControlEvent.StartCapture -> {
-				// TODO call arduino
-				_uiState.update { it.copy(capturingActive = true) }
+				sendCommand { startCapture() }
 				vibratorController.startVibrations(vibrationPatternThreeClick)
+				_uiState.update { it.copy(capturingActive = true) }
 			}
+		}
+	}
+
+	private fun sendCommand(command: suspend () -> Unit) {
+		viewModelScope.launch(Dispatchers.Default) {
+			command()
 		}
 	}
 }
@@ -108,11 +118,11 @@ data class HomeUiState internal constructor(
 	val trackerConnected: Boolean = true,
 	val openedCheckbox: Boolean = false,
 	val siderealActive: Boolean = false,
+	val ditheringEnabled: Boolean = false,
+	val capturingActive: Boolean = false,
 	val slewValue: Int = 0,
 	val exposeTime: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val frameCount: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
-	val ditheringEnabled: Boolean = false,
 	val ditherFocalLength: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherPixelSize: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
-	val capturingActive: Boolean = false,
 )

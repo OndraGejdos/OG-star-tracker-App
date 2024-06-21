@@ -1,6 +1,12 @@
 package og.ogstartracker.ui.components.cards
 
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -32,13 +38,13 @@ import og.ogstartracker.Constants
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.ui.components.common.CustomSwitch
+import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.components.common.input.ActionInput
 import og.ogstartracker.ui.screens.HomeUiState
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.ColorSecondary
-import og.ogstartracker.ui.theme.ColorShadow
 import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.DimensNormal150
 import og.ogstartracker.ui.theme.DimensSmall100
@@ -50,8 +56,7 @@ import og.ogstartracker.ui.theme.textStyle12Bold
 import og.ogstartracker.ui.theme.textStyle14Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
-import og.ogstartracker.utils.drawColoredShadow
-import og.ogstartracker.utils.drawShadow
+import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun PhotoControlCard(
@@ -59,11 +64,21 @@ fun PhotoControlCard(
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	modifier: Modifier = Modifier
 ) {
+	val infiniteTransition = rememberInfiniteTransition(label = "")
+	val color by infiniteTransition.animateColor(
+		initialValue = AppTheme.colorScheme.shadow,
+		targetValue = AppTheme.colorScheme.primary,
+		animationSpec = infiniteRepeatable(
+			animation = tween(500, 0, FastOutLinearInEasing),
+			repeatMode = RepeatMode.Reverse
+		), label = ""
+	)
+
 	Column(
 		modifier = modifier
-			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawShadow()
+			.segmentedShadow(color.takeIf { uiState.capturingActive } ?: AppTheme.colorScheme.shadow)
+			.padding(DimensNormal100)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.animateContentSize()
@@ -136,9 +151,7 @@ fun PhotoControlCard(
 			)
 		}
 
-		HorizontalDivider(
-			color = AppTheme.colorScheme.shadow,
-			thickness = 2.dp,
+		Divider(
 			modifier = Modifier.padding(vertical = DimensNormal100)
 		)
 
@@ -219,9 +232,7 @@ fun PhotoControlCard(
 			)
 		}
 
-		HorizontalDivider(
-			color = AppTheme.colorScheme.shadow,
-			thickness = 2.dp,
+		Divider(
 			modifier = Modifier.padding(vertical = DimensNormal100)
 		)
 
@@ -339,9 +350,7 @@ private fun CaptureInfo() {
 		)
 	}
 
-	HorizontalDivider(
-		color = AppTheme.colorScheme.shadow,
-		thickness = 2.dp,
+	Divider(
 		modifier = Modifier.padding(vertical = DimensNormal100)
 	)
 }

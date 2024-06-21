@@ -1,11 +1,11 @@
 package og.ogstartracker.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
@@ -26,10 +25,14 @@ import og.ogstartracker.ui.components.cards.ConnectionCard
 import og.ogstartracker.ui.components.cards.PhotoControlCard
 import og.ogstartracker.ui.components.cards.SiderealCard
 import og.ogstartracker.ui.components.cards.SlewControlCard
+import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.components.common.LocalInsets
 import og.ogstartracker.ui.theme.AppTheme
+import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.DimensNormal200
+import og.ogstartracker.ui.theme.DimensNormal75
 import og.ogstartracker.ui.theme.DimensSmall100
+import og.ogstartracker.ui.theme.DimensSmall50
 import og.ogstartracker.ui.theme.textStyle20Bold
 import og.ogstartracker.utils.SystemUiHelper
 import org.koin.androidx.compose.koinViewModel
@@ -92,8 +95,10 @@ private fun DashboardScreenLayout(
 		state = state,
 		modifier = modifier,
 		contentPadding = PaddingValues(
+			top = DimensNormal100,
 			bottom = LocalInsets.current.navigationBarInset + DimensNormal200
-		)
+		),
+		verticalArrangement = Arrangement.spacedBy(DimensSmall50)
 	) {
 		item {
 			Text(
@@ -112,17 +117,14 @@ private fun DashboardScreenLayout(
 		}
 
 		item {
-			HorizontalDivider(
-				thickness = 2.dp,
-				color = AppTheme.colorScheme.shadow
-			)
+			Divider(modifier = Modifier.padding(vertical = DimensNormal75))
 		}
 
 		item {
 			ChecklistCard(
 				opened = uiState.openedCheckbox,
 				onClick = onChecklistClicked,
-				enabled = uiState.trackerConnected
+				enabled = uiState.trackerConnected,
 			)
 		}
 

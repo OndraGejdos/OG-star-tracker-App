@@ -11,7 +11,12 @@ val appModule = module {
 	viewModel {
 		DashboardViewModel(
 			vibratorController = get(),
-			startSiderealTracking = get()
+			startSiderealTracking = get(),
+			stopSiderealTracking = get(),
+			trackerLeft = get(),
+			trackerRight = get(),
+			startCapture = get(),
+			abortCapture = get()
 		)
 	}
 

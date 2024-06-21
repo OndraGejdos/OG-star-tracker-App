@@ -38,7 +38,6 @@ import og.ogstartracker.ui.theme.DimensNormal125
 import og.ogstartracker.ui.theme.DimensNormal150
 import og.ogstartracker.ui.theme.DimensNormal200
 import og.ogstartracker.ui.theme.DimensSmall100
-import og.ogstartracker.ui.theme.DimensSmall125
 import og.ogstartracker.ui.theme.DimensSmall25
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
@@ -46,7 +45,7 @@ import og.ogstartracker.ui.theme.textStyle10Bold
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle20Bold
-import og.ogstartracker.utils.drawShadow
+import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun SlewControlCard(
@@ -57,9 +56,9 @@ fun SlewControlCard(
 ) {
 	Column(
 		modifier = modifier
-			.padding(DimensNormal100)
 			.fillMaxWidth()
-			.drawShadow()
+			.segmentedShadow(AppTheme.colorScheme.shadow)
+			.padding(DimensNormal100)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.alpha(Constants.Percent._100.takeIf { enabled } ?: Constants.Percent._50)
