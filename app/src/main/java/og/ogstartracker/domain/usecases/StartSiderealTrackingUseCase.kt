@@ -1,11 +1,12 @@
 package og.ogstartracker.domain.usecases
 
-import og.ogstartracker.domain.usecases.base.UseCaseNetworkNoParams
+import og.ogstartracker.domain.models.Hemisphere
+import og.ogstartracker.domain.usecases.base.ResourceSuspendUseCase
 import og.ogstartracker.repository.ArduinoRepository
 
 class StartSiderealTrackingUseCase constructor(
 	private val repository: ArduinoRepository
-) : UseCaseNetworkNoParams<Unit>() {
+) : ResourceSuspendUseCase<Hemisphere, Unit> {
 
-	override suspend fun doWork(params: Unit) = repository.startSideRealTracking()
+	override suspend fun invoke(input: Hemisphere) = repository.startSideRealTracking(input)
 }

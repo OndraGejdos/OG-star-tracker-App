@@ -200,7 +200,7 @@ fun PhotoControlCard(
 				.padding(top = DimensNormal100)
 		) {
 			ActionInput(
-				enabled = !uiState.capturingActive && uiState.trackerConnected,
+				enabled = !uiState.capturingActive && uiState.trackerConnected && uiState.ditheringEnabled,
 				textFieldState = uiState.ditherFocalLength,
 				label = stringResource(id = R.string.photo_control_focal_length),
 				placeholder = "0",
@@ -215,7 +215,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
-				enabled = !uiState.capturingActive && uiState.trackerConnected,
+				enabled = !uiState.capturingActive && uiState.trackerConnected && uiState.ditheringEnabled,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.ditherPixelSize,
 				label = stringResource(id = R.string.photo_control_pixel_size),
@@ -260,7 +260,7 @@ fun PhotoControlCard(
 					.weight(1f)
 					.height(40.dp),
 				contentPadding = PaddingValues(horizontal = DimensSmall100),
-				enabled = !uiState.capturingActive && uiState.trackerConnected,
+				enabled = !uiState.capturingActive && uiState.trackerConnected && uiState.arePhotoControlInputsValid(),
 			) {
 				Text(
 					text = stringResource(id = R.string.photo_control_start_capture).uppercase(),

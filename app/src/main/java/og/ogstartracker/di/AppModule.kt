@@ -17,12 +17,16 @@ val appModule = module {
 			trackerLeft = get(),
 			trackerRight = get(),
 			startCapture = get(),
-			abortCapture = get()
+			abortCapture = get(),
+			getCurrentHemisphereFlow = get()
 		)
 	}
 
 	viewModel {
-		SettingsViewModel()
+		SettingsViewModel(
+			setCurrentHemisphere = get(),
+			getCurrentHemisphereFlow = get()
+		)
 	}
 
 	single {

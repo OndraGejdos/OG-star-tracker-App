@@ -1,11 +1,11 @@
 package og.ogstartracker.domain.usecases
 
-import og.ogstartracker.domain.usecases.base.UseCaseNetworkNoParams
+import og.ogstartracker.domain.usecases.base.ResourceSuspendProviderUseCase
 import og.ogstartracker.repository.ArduinoRepository
 
 class StopSiderealTrackingUseCase constructor(
 	private val repository: ArduinoRepository
-) : UseCaseNetworkNoParams<Unit>() {
+) : ResourceSuspendProviderUseCase<Unit> {
 
-	override suspend fun doWork(params: Unit) = repository.stopSideRealTracking()
+	override suspend fun invoke() = repository.stopSideRealTracking()
 }

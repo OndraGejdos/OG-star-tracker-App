@@ -4,14 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
+import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.domain.usecases.AbortCaptureUseCase
+import og.ogstartracker.domain.usecases.GetCurrentHemisphereFlowUseCase
 import og.ogstartracker.domain.usecases.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
 import og.ogstartracker.domain.usecases.StopSiderealTrackingUseCase
@@ -20,6 +23,7 @@ import og.ogstartracker.domain.usecases.TurnTrackerRightUseCase
 import og.ogstartracker.ui.components.common.input.NotEmptyValidator
 import og.ogstartracker.ui.components.common.input.TextFieldState
 import og.ogstartracker.utils.VibratorController
+import og.ogstartracker.utils.WhileUiSubscribed
 import og.ogstartracker.utils.vibrationPatternClick
 import og.ogstartracker.utils.vibrationPatternThreeClick
 
@@ -31,10 +35,16 @@ class DashboardViewModel internal constructor(
 	private val trackerRight: TurnTrackerRightUseCase,
 	private val startCapture: StartCaptureUseCase,
 	private val abortCapture: AbortCaptureUseCase,
+	getCurrentHemisphereFlow: GetCurrentHemisphereFlowUseCase,
 ) : ViewModel() {
 
 	private val _uiState = MutableStateFlow(HomeUiState())
-	val uiState = _uiState.asStateFlow()
+	val uiState = combine(
+		getCurrentHemisphereFlow(),
+		_uiState
+	) { hemisphere, uiState ->
+		uiState.copy(hemisphere = hemisphere)
+	}.stateIn(viewModelScope, WhileUiSubscribed, HomeUiState())
 
 	internal fun changeChecklist() {
 		_uiState.update { it.copy(openedCheckbox = !it.openedCheckbox) }
@@ -42,7 +52,7 @@ class DashboardViewModel internal constructor(
 
 	internal fun changeSidereal(active: Boolean) {
 		if (active) {
-			sendCommand { startSiderealTracking() }
+			sendCommand { startSiderealTracking(uiState.value.hemisphere ?: return@sendCommand) }
 			vibratorController.startVibrations(vibrationPatternThreeClick)
 		} else {
 			sendCommand { stopSiderealTracking() }
@@ -69,12 +79,12 @@ class DashboardViewModel internal constructor(
 			}
 
 			SlewControlEvent.RotateAnticlockwise -> {
-				sendCommand { trackerLeft() }
+				sendCommand { trackerLeft(uiState.value.slewValue) }
 				vibratorController.startVibrations(vibrationPatternClick)
 			}
 
 			SlewControlEvent.RotateClockwise -> {
-				sendCommand { trackerRight }
+				sendCommand { trackerRight(uiState.value.slewValue) }
 				vibratorController.startVibrations(vibrationPatternClick)
 			}
 		}
@@ -100,7 +110,25 @@ class DashboardViewModel internal constructor(
 			}
 
 			PhotoControlEvent.StartCapture -> {
-				sendCommand { startCapture() }
+				sendCommand {
+					startCapture(
+						StartCaptureUseCase.Input(
+							exposure = uiState.value.exposeTime.textState.text.toIntOrNull() ?: return@sendCommand,
+							numExposures = uiState.value.frameCount.textState.text.toIntOrNull() ?: return@sendCommand,
+							focalLength = if (uiState.value.ditheringEnabled) {
+								uiState.value.ditherFocalLength.textState.text.toIntOrNull() ?: return@sendCommand
+							} else {
+								0
+							},
+							pixSize = if (uiState.value.ditheringEnabled) {
+								uiState.value.ditherPixelSize.textState.text.toIntOrNull() ?: return@sendCommand
+							} else {
+								0
+							},
+							ditherEnabled = if (uiState.value.ditheringEnabled) 1 else 0,
+						)
+					)
+				}
 				vibratorController.startVibrations(vibrationPatternThreeClick)
 				_uiState.update { it.copy(capturingActive = true) }
 			}
@@ -115,6 +143,7 @@ class DashboardViewModel internal constructor(
 }
 
 data class HomeUiState internal constructor(
+	val hemisphere: Hemisphere? = null,
 	val trackerConnected: Boolean = true,
 	val openedCheckbox: Boolean = false,
 	val siderealActive: Boolean = false,
@@ -125,4 +154,15 @@ data class HomeUiState internal constructor(
 	val frameCount: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherFocalLength: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherPixelSize: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
-)
+) {
+	fun arePhotoControlInputsValid(): Boolean {
+		val intervalometerValid = exposeTime.isValid() && frameCount.isValid()
+		val ditherValid = ditherFocalLength.isValid() && ditherPixelSize.isValid()
+
+		return if (ditheringEnabled) {
+			return ditherValid && intervalometerValid
+		} else {
+			intervalometerValid
+		}
+	}
+}

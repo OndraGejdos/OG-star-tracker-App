@@ -6,9 +6,12 @@ import og.ogstartracker.network.EmptyBodyConverterFactory
 import og.ogstartracker.network.UnitConverterFactory
 import og.ogstartracker.repository.ArduinoRepository
 import og.ogstartracker.repository.ArduinoRepositoryImpl
+import og.ogstartracker.repository.DataStoreRepository
+import og.ogstartracker.repository.DataStoreRepositoryImpl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.bind
@@ -84,6 +87,12 @@ val networkModule = module {
 	single<ArduinoRepository> {
 		ArduinoRepositoryImpl(
 			arduinoApi = get()
+		)
+	}
+
+	single<DataStoreRepository> {
+		DataStoreRepositoryImpl(
+			context = androidContext()
 		)
 	}
 

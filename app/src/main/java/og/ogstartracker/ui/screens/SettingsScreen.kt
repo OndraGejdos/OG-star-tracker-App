@@ -27,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import og.ogstartracker.R
+import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.DimensNormal100
@@ -116,13 +117,17 @@ private fun SettingsScreenLayout(
 ) {
 	Column(modifier = modifier.fillMaxSize()) {
 		Divider()
-		Hemisphere(onClick = onHemisphereClick)
+		Hemisphere(
+			onClick = onHemisphereClick,
+			hemisphere = uiState.hemisphere ?: Hemisphere.NORTH
+		)
 		Divider()
 	}
 }
 
 @Composable
 fun Hemisphere(
+	hemisphere: Hemisphere,
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
@@ -136,13 +141,13 @@ fun Hemisphere(
 			}
 	) {
 		Text(
-			text = stringResource(id = R.string.settings_hemisphere).uppercase(),
+			text = stringResource(id = R.string.settings_hemisphere),
 			style = textStyle16Regular,
 			color = AppTheme.colorScheme.primary,
 			modifier = modifier.weight(1f)
 		)
 		Text(
-			text = "Northern".uppercase(),
+			text = stringResource(id = hemisphere.text).uppercase(),
 			style = textStyle16Bold,
 			color = AppTheme.colorScheme.primary
 		)
@@ -153,7 +158,10 @@ fun Hemisphere(
 @Composable
 fun HemispherePreview() {
 	AppTheme {
-		Hemisphere(onClick = {})
+		Hemisphere(
+			onClick = {},
+			hemisphere = Hemisphere.NORTH
+		)
 	}
 }
 

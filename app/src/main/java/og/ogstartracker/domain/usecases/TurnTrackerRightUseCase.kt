@@ -1,11 +1,11 @@
 package og.ogstartracker.domain.usecases
 
-import og.ogstartracker.domain.usecases.base.UseCaseNetworkNoParams
+import og.ogstartracker.domain.usecases.base.ResourceSuspendUseCase
 import og.ogstartracker.repository.ArduinoRepository
 
 class TurnTrackerRightUseCase constructor(
 	private val repository: ArduinoRepository
-) : UseCaseNetworkNoParams<Unit>() {
+) : ResourceSuspendUseCase<Int, Unit> {
 
-	override suspend fun doWork(params: Unit) = repository.turnRight()
+	override suspend fun invoke(input: Int) = repository.turnRight(input)
 }

@@ -120,5 +120,5 @@ class VibratorController constructor(
 	}
 }
 
-val vibrationPatternThreeClick: LongArray = longArrayOf(0, 50, 25, 50)
+val vibrationPatternThreeClick: LongArray = longArrayOf(0, 50)
 val vibrationPatternClick: LongArray = longArrayOf(0, 50)

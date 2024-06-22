@@ -1,11 +1,11 @@
 package og.ogstartracker.domain.usecases
 
-import og.ogstartracker.domain.usecases.base.UseCaseNetworkNoParams
+import og.ogstartracker.domain.usecases.base.ResourceSuspendProviderUseCase
 import og.ogstartracker.repository.ArduinoRepository
 
 class GetCurrentStateUseCase constructor(
 	private val repository: ArduinoRepository
-) : UseCaseNetworkNoParams<String>() {
+) : ResourceSuspendProviderUseCase<String> {
 
-	override suspend fun doWork(params: Unit) = repository.getStatus()
+	override suspend fun invoke() = repository.getStatus()
 }
