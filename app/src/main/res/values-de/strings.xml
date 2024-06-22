@@ -38,4 +38,8 @@
 	<string name="slew_control_move">Verschieben</string>
 	<string name="slew_control_acw">linksdrehend</string>
 	<string name="slew_control_cw">rechtsdrehend</string>
+	<string name="settings_title">Settings</string>
+	<string name="settings_hemisphere">Your hemisphere</string>
+	<string name="settings_north">Northern</string>
+	<string name="settings_south">Southern</string>
 </resources>

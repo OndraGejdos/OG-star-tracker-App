@@ -2,20 +2,27 @@ package og.ogstartracker.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
@@ -52,6 +59,12 @@ fun DashboardScreen(
 		onSiderealClicked = viewModel::changeSidereal,
 		onSlewControlEvent = viewModel::slewControlEvent,
 		onPhotoControlEvent = viewModel::photoControlEvent,
+		onGearClick = {
+			navController.navigate("settings")
+		},
+		onInfoClick = {
+			navController.navigate("info")
+		}
 	)
 }
 
@@ -62,6 +75,8 @@ private fun DashboardScreenContent(
 	onSiderealClicked: (Boolean) -> Unit,
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
+	onGearClick: () -> Unit,
+	onInfoClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	Scaffold(
@@ -74,6 +89,8 @@ private fun DashboardScreenContent(
 				onSiderealClicked = onSiderealClicked,
 				onSlewControlEvent = onSlewControlEvent,
 				onPhotoControlEvent = onPhotoControlEvent,
+				onGearClick = onGearClick,
+				onInfoClick = onInfoClick
 			)
 		},
 		containerColor = MaterialTheme.colorScheme.surface,
@@ -86,6 +103,8 @@ private fun DashboardScreenLayout(
 	onChecklistClicked: () -> Unit,
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
+	onGearClick: () -> Unit,
+	onInfoClick: () -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -101,15 +120,41 @@ private fun DashboardScreenLayout(
 		verticalArrangement = Arrangement.spacedBy(DimensSmall50)
 	) {
 		item {
-			Text(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(vertical = DimensSmall100),
-				text = stringResource(id = R.string.main_title).uppercase(),
-				style = textStyle20Bold,
-				textAlign = TextAlign.Center,
-				color = AppTheme.colorScheme.primary,
-			)
+			Row(
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				IconButton(onClick = { onInfoClick() }) {
+					Icon(
+						imageVector = ImageVector.vectorResource(R.drawable.ic_information),
+						tint = AppTheme.colorScheme.primary,
+						contentDescription = null,
+						modifier = Modifier
+							.size(48.dp)
+							.padding(DimensSmall100)
+					)
+				}
+
+				Text(
+					modifier = Modifier
+						.weight(1f)
+						.padding(vertical = DimensSmall100),
+					text = stringResource(id = R.string.main_title).uppercase(),
+					style = textStyle20Bold,
+					textAlign = TextAlign.Center,
+					color = AppTheme.colorScheme.primary,
+				)
+
+				IconButton(onClick = { onGearClick() }) {
+					Icon(
+						imageVector = ImageVector.vectorResource(R.drawable.ic_cog),
+						tint = AppTheme.colorScheme.primary,
+						contentDescription = null,
+						modifier = Modifier
+							.size(48.dp)
+							.padding(DimensSmall100)
+					)
+				}
+			}
 		}
 
 		item {
@@ -164,7 +209,9 @@ internal fun HomeScreenContentPreview() {
 			onChecklistClicked = {},
 			onSiderealClicked = {},
 			onSlewControlEvent = {},
-			onPhotoControlEvent = {}
+			onPhotoControlEvent = {},
+			onInfoClick = {},
+			onGearClick = {}
 		)
 	}
 }

@@ -19,7 +19,7 @@ import og.ogstartracker.ui.theme.DimensNormal100
 
 fun Modifier.segmentedShadow(
 	color: Color,
-	layers: Int = 5,
+	layers: Int = 10,
 	shadowWidth: Dp = DimensNormal100
 ): Modifier {
 	return this.drawBehind {

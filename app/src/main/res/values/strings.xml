@@ -37,4 +37,8 @@
 	<string name="slew_control_move">Move</string>
 	<string name="slew_control_acw">anticlockwise</string>
 	<string name="slew_control_cw">clockwise</string>
+	<string name="settings_title">Settings</string>
+	<string name="settings_hemisphere">Your hemisphere</string>
+	<string name="settings_north">Northern</string>
+	<string name="settings_south">Southern</string>
 </resources>

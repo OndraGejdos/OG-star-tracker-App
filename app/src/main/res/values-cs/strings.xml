@@ -38,6 +38,10 @@
 	<string name="slew_control_move">Pohnout</string>
 	<string name="slew_control_acw">Proti směru</string>
 	<string name="slew_control_cw">Po směru</string>
+	<string name="settings_title">Nastavení</string>
+	<string name="settings_hemisphere">Vaše hemisféra</string>
+	<string name="settings_north">Severní</string>
+	<string name="settings_south">Jižní</string>
 
 
 </resources>

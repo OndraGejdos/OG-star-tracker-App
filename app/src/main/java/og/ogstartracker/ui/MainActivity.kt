@@ -9,13 +9,20 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import og.ogstartracker.R
 import og.ogstartracker.ui.components.common.ProvidesInsets
 import og.ogstartracker.ui.screens.DashboardScreen
+import og.ogstartracker.ui.screens.SettingsScreen
 import og.ogstartracker.ui.theme.AppTheme
+import og.ogstartracker.utils.slideEnterAnimation
+import og.ogstartracker.utils.slideExitAnimation
+import og.ogstartracker.utils.slidePopEnterAnimation
+import og.ogstartracker.utils.slidePopExitAnimation
 
 class MainActivity : ComponentActivity() {
 
@@ -30,10 +37,26 @@ class MainActivity : ComponentActivity() {
 		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
 		setContent {
+			val navController = rememberNavController()
+
 			AppTheme {
 				ProvidesInsets {
-					val navController = rememberNavController()
-					DashboardScreen(navController = navController)
+					NavHost(
+						navController = navController,
+						startDestination = "dashboard",
+						enterTransition = slideEnterAnimation(),
+						exitTransition = slideExitAnimation(),
+						popEnterTransition = slidePopEnterAnimation(),
+						popExitTransition = slidePopExitAnimation(),
+					) {
+						composable("dashboard") {
+							DashboardScreen(navController = navController)
+						}
+
+						composable("settings") {
+							SettingsScreen(navController = navController)
+						}
+					}
 				}
 			}
 		}
@@ -48,7 +71,7 @@ class MainActivity : ComponentActivity() {
 		}
 
 		lifecycleScope.launch {
-			delay(2000)
+			delay(1500)
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 				splashScreen.setKeepOnScreenCondition { false }
 			} else {

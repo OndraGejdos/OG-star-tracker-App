@@ -1,6 +1,7 @@
 package og.ogstartracker.di
 
 import og.ogstartracker.ui.screens.DashboardViewModel
+import og.ogstartracker.ui.screens.SettingsViewModel
 import og.ogstartracker.utils.VibratorController
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -18,6 +19,10 @@ val appModule = module {
 			startCapture = get(),
 			abortCapture = get()
 		)
+	}
+
+	viewModel {
+		SettingsViewModel()
 	}
 
 	single {

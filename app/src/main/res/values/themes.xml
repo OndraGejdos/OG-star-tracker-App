@@ -5,7 +5,7 @@
 
 	<style name="Theme.App.Starting" parent="Theme.SplashScreen">
 		<item name="windowSplashScreenBackground">@color/black</item>
-		<item name="windowSplashScreenAnimatedIcon">@drawable/logo2</item>
+		<item name="windowSplashScreenAnimatedIcon">@drawable/super_logo</item>
 		<item name="android:windowSplashScreenBrandingImage" tools:targetApi="s">@drawable/brand</item>
 		<item name="postSplashScreenTheme">@style/AppTheme</item>
 		<item name="android:windowBackground">@drawable/splash_screen</item>
@@ -14,4 +14,5 @@
 	<style name="Theme.App.Starting.Legacy" parent="AppTheme">
 		<item name="android:windowBackground">@drawable/splash_screen</item>
 	</style>
+
 </resources>
