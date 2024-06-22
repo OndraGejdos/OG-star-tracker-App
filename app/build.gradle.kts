@@ -1,36 +1,76 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.jetbrains.kotlin.android)
 }
 
-val JAVA_VERSION = JavaVersion.VERSION_17
-
 android {
-	namespace = "og.ogstartracker"
+	val packageName = "og.ogstartracker"
+
+	namespace = packageName
 	compileSdk = 34
 
+	val buildVersionCode = Integer.parseInt(System.getenv("VERSION_CODE") ?: "1")
+	val buildVersionName = System.getenv("VERSION_NAME") ?: "1.0.0"
+
 	defaultConfig {
-		applicationId = "og.ogstartracker"
+		applicationId = packageName
 		minSdk = 26
 		targetSdk = 34
-		versionCode = 1
-		versionName = "1.0"
+		versionCode = buildVersionCode
+		versionName = buildVersionName
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+		resourceConfigurations.addAll(listOf("en", "cs", "de"))
 	}
 
+	signingConfigs {
+		getByName("debug") { }
+
+		create("release") {
+			val secretsPropertiesFile = rootProject.file("secrets.properties")
+			val secretProperties = Properties()
+			if (secretsPropertiesFile.exists()) {
+				secretProperties.load(
+					FileInputStream(
+						secretsPropertiesFile
+					)
+				)
+			}
+			val releaseStorePassword = "${secretProperties["secretStorePassword"]}"
+			val releaseKeyPassword = "${secretProperties["secretKeyPassword"]}"
+			storeFile = file("prod.keystore")
+			storePassword = releaseStorePassword
+			keyAlias = "key0"
+			keyPassword = releaseKeyPassword
+		}
+	}
+
+	flavorDimensions.add("environment")
+
 	buildTypes {
+		debug {
+			applicationIdSuffix = ".debug"
+		}
 		release {
 			isMinifyEnabled = true
 			proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+			signingConfig = signingConfigs.getByName("release")
+			proguardFiles(
+				getDefaultProguardFile("proguard-android-optimize.txt"),
+				"proguard-rules/proguard-rules.pro"
+			)
 		}
 	}
 	compileOptions {
-		sourceCompatibility = JAVA_VERSION
-		targetCompatibility = JAVA_VERSION
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
 	kotlinOptions {
-		jvmTarget = JAVA_VERSION.toString()
+		jvmTarget = JavaVersion.VERSION_17.toString()
 	}
 	buildFeatures {
 		compose = true

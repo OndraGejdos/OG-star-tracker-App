@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/release/app-release.aab
+app/prod.keystore
+secrets.properties
