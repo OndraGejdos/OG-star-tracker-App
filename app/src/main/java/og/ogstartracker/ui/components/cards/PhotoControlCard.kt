@@ -40,7 +40,7 @@ import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.ui.components.common.CustomSwitch
 import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.components.common.input.ActionInput
-import og.ogstartracker.ui.screens.HomeUiState
+import og.ogstartracker.ui.screens.DashboardUiState
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
@@ -57,10 +57,11 @@ import og.ogstartracker.ui.theme.textStyle14Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
 import og.ogstartracker.utils.segmentedShadow
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PhotoControlCard(
-	uiState: HomeUiState,
+	uiState: DashboardUiState,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	modifier: Modifier = Modifier
 ) {
@@ -82,7 +83,7 @@ fun PhotoControlCard(
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.animateContentSize()
-			.alpha(Constants.Percent._100.takeIf { uiState.trackerConnected } ?: Constants.Percent._50)
+			.alpha(Constants.Percent.PERCENT_100.takeIf { uiState.trackerConnected } ?: Constants.Percent.PERCENT_50)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -237,7 +238,7 @@ fun PhotoControlCard(
 		)
 
 		if (uiState.capturingActive) {
-			CaptureInfo()
+			CaptureInfo(uiState = uiState)
 		}
 
 		Row(
@@ -301,7 +302,7 @@ fun PhotoControlCard(
 }
 
 @Composable
-private fun CaptureInfo() {
+private fun CaptureInfo(uiState: DashboardUiState) {
 	Row(
 		Modifier
 			.fillMaxWidth()
@@ -315,7 +316,7 @@ private fun CaptureInfo() {
 			color = AppTheme.colorScheme.secondary
 		)
 		Text(
-			text = stringResource(id = R.string.photo_control_taken_exposures_value, 14, 100),
+			text = uiState.getCaptureRatio(),
 			style = textStyle16Bold,
 			color = AppTheme.colorScheme.secondary
 		)
@@ -336,13 +337,13 @@ private fun CaptureInfo() {
 		)
 		Text(
 			text = buildString {
-				append("0")
+				append(uiState.captureElapsedTimeMillis?.milliseconds?.inWholeHours ?: 0)
 				append(stringResource(id = R.string.photo_control_elapsed_time_hour))
 				append(" ")
-				append("14")
+				append(uiState.captureElapsedTimeMillis?.milliseconds?.inWholeMinutes ?: 0)
 				append(stringResource(id = R.string.photo_control_elapsed_time_minute))
 				append(" ")
-				append("35")
+				append(uiState.captureElapsedTimeMillis?.milliseconds?.inWholeSeconds ?: 0)
 				append(stringResource(id = R.string.photo_control_elapsed_time_second))
 			},
 			style = textStyle16Bold,
@@ -360,7 +361,7 @@ private fun CaptureInfo() {
 fun PhotoControlCardPreview() {
 	AppTheme {
 		PhotoControlCard(
-			uiState = HomeUiState(),
+			uiState = DashboardUiState(),
 			onPhotoControlEvent = {},
 		)
 	}

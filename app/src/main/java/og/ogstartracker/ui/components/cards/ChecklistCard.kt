@@ -76,7 +76,7 @@ fun ChecklistCard(
 				onClick()
 			}
 			.animateContentSize()
-			.alpha(Constants.Percent._100.takeIf { enabled } ?: Constants.Percent._50)
+			.alpha(Constants.Percent.PERCENT_100.takeIf { enabled } ?: Constants.Percent.PERCENT_50)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,

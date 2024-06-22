@@ -61,7 +61,7 @@ fun SlewControlCard(
 			.padding(DimensNormal100)
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
-			.alpha(Constants.Percent._100.takeIf { enabled } ?: Constants.Percent._50)
+			.alpha(Constants.Percent.PERCENT_100.takeIf { enabled } ?: Constants.Percent.PERCENT_50)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,

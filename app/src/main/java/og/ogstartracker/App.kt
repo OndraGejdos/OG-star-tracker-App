@@ -3,6 +3,7 @@ package og.ogstartracker
 import android.app.Application
 import og.ogstartracker.di.appModule
 import og.ogstartracker.di.networkModule
+import og.ogstartracker.di.repositoryModule
 import og.ogstartracker.di.useCaseModule
 import og.ogstartracker.utils.CustomDebugTree
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +26,8 @@ class App : Application() {
 				listOf(
 					appModule,
 					networkModule,
-					useCaseModule
+					useCaseModule,
+					repositoryModule
 				)
 			)
 		}

@@ -70,7 +70,7 @@ fun DashboardScreen(
 
 @Composable
 private fun DashboardScreenContent(
-	uiState: HomeUiState,
+	uiState: DashboardUiState,
 	onChecklistClicked: () -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
@@ -99,7 +99,7 @@ private fun DashboardScreenContent(
 
 @Composable
 private fun DashboardScreenLayout(
-	uiState: HomeUiState,
+	uiState: DashboardUiState,
 	onChecklistClicked: () -> Unit,
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
@@ -205,7 +205,7 @@ private fun DashboardScreenLayout(
 internal fun HomeScreenContentPreview() {
 	AppTheme {
 		DashboardScreenContent(
-			uiState = HomeUiState(),
+			uiState = DashboardUiState(),
 			onChecklistClicked = {},
 			onSiderealClicked = {},
 			onSlewControlEvent = {},
