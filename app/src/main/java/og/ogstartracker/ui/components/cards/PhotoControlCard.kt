@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import og.ogstartracker.Constants
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
+import og.ogstartracker.domain.usecases.SettingItem
 import og.ogstartracker.ui.components.common.CustomSwitch
 import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.components.common.input.ActionInput
@@ -57,12 +58,16 @@ import og.ogstartracker.ui.theme.textStyle14Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
 import og.ogstartracker.utils.segmentedShadow
+import og.ogstartracker.utils.toHours
+import og.ogstartracker.utils.toMinutes
+import og.ogstartracker.utils.toSeconds
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PhotoControlCard(
 	uiState: DashboardUiState,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
+	notifyAboutChange: (SettingItem, Int?) -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -139,6 +144,10 @@ fun PhotoControlCard(
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
+				},
+				onValueChange = {
+					uiState.exposeTime.setNewState(it)
+					notifyAboutChange(SettingItem.EXPOSURE_TIME, it.text.toIntOrNull())
 				}
 			)
 			ActionInput(
@@ -148,7 +157,11 @@ fun PhotoControlCard(
 				label = stringResource(id = R.string.photo_control_exposure_count),
 				placeholder = "0",
 				imeAction = ImeAction.Done,
-				keyboardType = KeyboardType.Number
+				keyboardType = KeyboardType.Number,
+				onValueChange = {
+					uiState.frameCount.setNewState(it)
+					notifyAboutChange(SettingItem.EXPOSURE_COUNT, it.text.toIntOrNull())
+				}
 			)
 		}
 
@@ -189,6 +202,7 @@ fun PhotoControlCard(
 				checked = uiState.ditheringEnabled,
 				onCheckChange = {
 					onPhotoControlEvent(PhotoControlEvent.DitheringActivation(!uiState.ditheringEnabled))
+					notifyAboutChange(SettingItem.DITHER_ACTIVE, if (it) 1 else 0)
 				},
 				modifier = Modifier.padding(end = DimensNormal100),
 				enabled = !uiState.capturingActive && uiState.trackerConnected,
@@ -213,6 +227,10 @@ fun PhotoControlCard(
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
+				},
+				onValueChange = {
+					uiState.ditherFocalLength.setNewState(it)
+					notifyAboutChange(SettingItem.FOCAL_LENGTH, it.text.toIntOrNull())
 				}
 			)
 			ActionInput(
@@ -229,6 +247,10 @@ fun PhotoControlCard(
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
+				},
+				onValueChange = {
+					uiState.ditherPixelSize.setNewState(it)
+					notifyAboutChange(SettingItem.PIXEL_SIZE, it.text.toIntOrNull())
 				}
 			)
 		}
@@ -331,6 +353,35 @@ private fun CaptureInfo(uiState: DashboardUiState) {
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Text(
+			text = stringResource(id = R.string.photo_control_estimated_time).uppercase(),
+			style = textStyle12Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+		Text(
+			text = buildString {
+				append(uiState.captureEstimatedTimeMillis?.toHours() ?: 0)
+				append(stringResource(id = R.string.photo_control_elapsed_time_hour))
+				append(" ")
+				append(uiState.captureEstimatedTimeMillis?.toMinutes() ?: 0)
+				append(stringResource(id = R.string.photo_control_elapsed_time_minute))
+				append(" ")
+				append(uiState.captureEstimatedTimeMillis?.toSeconds() ?: 0)
+				append(stringResource(id = R.string.photo_control_elapsed_time_second))
+			},
+			style = textStyle16Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+	}
+
+	Row(
+		Modifier
+			.fillMaxWidth()
+			.padding(horizontal = DimensNormal100)
+			.padding(top = DimensSmall100),
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Text(
 			text = stringResource(id = R.string.photo_control_elapsed_time).uppercase(),
 			style = textStyle12Bold,
 			color = AppTheme.colorScheme.secondary
@@ -363,6 +414,7 @@ fun PhotoControlCardPreview() {
 		PhotoControlCard(
 			uiState = DashboardUiState(),
 			onPhotoControlEvent = {},
+			notifyAboutChange = { _, _ -> }
 		)
 	}
 }

@@ -27,6 +27,7 @@
 	<string name="photo_control_taken_exposures">Number of exposures taken</string>
 	<string name="photo_control_taken_exposures_value">%d/%d</string>
 	<string name="photo_control_elapsed_time">Verstrichene Zeit</string>
+	<string name="photo_control_estimated_time">Estimated time</string>
 	<string name="photo_control_elapsed_time_hour">h</string>
 	<string name="photo_control_elapsed_time_minute">m</string>
 	<string name="photo_control_elapsed_time_second">s</string>

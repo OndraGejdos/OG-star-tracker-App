@@ -17,6 +17,9 @@ import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.domain.usecases.AbortCaptureUseCase
 import og.ogstartracker.domain.usecases.GetCurrentHemisphereFlowUseCase
+import og.ogstartracker.domain.usecases.GetSettingsUseCase
+import og.ogstartracker.domain.usecases.SetNewSettingsUseCase
+import og.ogstartracker.domain.usecases.SettingItem
 import og.ogstartracker.domain.usecases.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
 import og.ogstartracker.domain.usecases.StopSiderealTrackingUseCase
@@ -29,6 +32,7 @@ import og.ogstartracker.utils.WhileUiSubscribed
 import og.ogstartracker.utils.onSuccess
 import og.ogstartracker.utils.vibrationPatternClick
 import og.ogstartracker.utils.vibrationPatternThreeClick
+import timber.log.Timber
 
 class DashboardViewModel internal constructor(
 	private val vibratorController: VibratorController,
@@ -38,15 +42,39 @@ class DashboardViewModel internal constructor(
 	private val trackerRight: TurnTrackerRightUseCase,
 	private val startCapture: StartCaptureUseCase,
 	private val abortCapture: AbortCaptureUseCase,
+	private val setNewSettings: SetNewSettingsUseCase,
 	getCurrentHemisphereFlow: GetCurrentHemisphereFlowUseCase,
+	getSettings: GetSettingsUseCase,
 ) : ViewModel() {
 
 	private var timerJob: Job? = null
 
+	val settingsItemsFlow = og.ogstartracker.utils.combine(
+		getSettings(SettingItem.PIXEL_SIZE),
+		getSettings(SettingItem.FOCAL_LENGTH),
+		getSettings(SettingItem.EXPOSURE_COUNT),
+		getSettings(SettingItem.EXPOSURE_TIME),
+		getSettings(SettingItem.DITHER_ACTIVE),
+		getSettings(SettingItem.SLEW_SPEED),
+	) { pixelSize, focalLength, exposureCount, exposureTime, ditherActive, slewSpeed ->
+		_uiState.update {
+			it.copy(
+				exposeTime = TextFieldState(text = exposureTime?.toString() ?: "", NotEmptyValidator()),
+				frameCount = TextFieldState(text = exposureCount?.toString() ?: "", NotEmptyValidator()),
+				ditherFocalLength = TextFieldState(text = focalLength?.toString() ?: "", NotEmptyValidator()),
+				ditherPixelSize = TextFieldState(text = pixelSize?.toString() ?: "", NotEmptyValidator()),
+				slewValue = slewSpeed ?: 0,
+				ditheringEnabled = ditherActive == 1
+			)
+		}
+		return@combine
+	}
+		.stateIn(viewModelScope, WhileUiSubscribed, Unit)
+
 	private val _uiState = MutableStateFlow(DashboardUiState())
 	val uiState = combine(
 		getCurrentHemisphereFlow(),
-		_uiState
+		_uiState,
 	) { hemisphere, uiState ->
 		uiState.copy(hemisphere = hemisphere)
 	}.stateIn(viewModelScope, WhileUiSubscribed, DashboardUiState())
@@ -61,32 +89,33 @@ class DashboardViewModel internal constructor(
 				startSiderealTracking(uiState.value.hemisphere ?: return@sendCommand).onSuccess {
 					vibratorController.startVibrations(vibrationPatternThreeClick)
 				}
+				_uiState.update { it.copy(siderealActive = true) }
 			}
 		} else {
 			sendCommand {
 				stopSiderealTracking().onSuccess {
 					vibratorController.startVibrations(vibrationPatternClick)
 				}
+				_uiState.update { it.copy(siderealActive = false) }
 			}
 		}
 
-		_uiState.update { it.copy(siderealActive = active) }
 	}
 
-	fun slewControlEvent(slewControlEvent: SlewControlEvent) {
+	internal fun slewControlEvent(slewControlEvent: SlewControlEvent) {
 		when (slewControlEvent) {
 			SlewControlEvent.Minus -> {
-				_uiState.update {
-					it.copy(slewValue = (it.slewValue - 1).coerceAtLeast(SLEW_MIN_VALUE))
-				}
+				val newValue = (uiState.value.slewValue - 1).coerceAtLeast(SLEW_MIN_VALUE)
+				_uiState.update { it.copy(slewValue = newValue) }
 				vibratorController.startVibrations(vibrationPatternClick)
+				notifyAboutChange(SettingItem.SLEW_SPEED, newValue)
 			}
 
 			SlewControlEvent.Plus -> {
-				_uiState.update {
-					it.copy(slewValue = (it.slewValue + 1).coerceAtMost(SLEW_MAX_VALUE))
-				}
+				val newValue = (uiState.value.slewValue + 1).coerceAtMost(SLEW_MAX_VALUE)
+				_uiState.update { it.copy(slewValue = newValue) }
 				vibratorController.startVibrations(vibrationPatternClick)
+				notifyAboutChange(SettingItem.SLEW_SPEED, newValue)
 			}
 
 			SlewControlEvent.RotateAnticlockwise -> {
@@ -111,7 +140,12 @@ class DashboardViewModel internal constructor(
 		when (photoControlEvent) {
 			is PhotoControlEvent.DitheringActivation -> {
 				_uiState.update {
-					it.copy(ditheringEnabled = photoControlEvent.active, captureCount = -1, captureElapsedTimeMillis = 0)
+					it.copy(
+						ditheringEnabled = photoControlEvent.active,
+						captureCount = 0,
+						captureElapsedTimeMillis = 0,
+						captureEstimatedTimeMillis = 0
+					)
 				}
 				if (photoControlEvent.active) {
 					vibratorController.startVibrations(vibrationPatternThreeClick)
@@ -124,7 +158,14 @@ class DashboardViewModel internal constructor(
 				sendCommand {
 					abortCapture().onSuccess {
 						vibratorController.startVibrations(vibrationPatternClick)
-						_uiState.update { it.copy(capturingActive = false, captureCount = 0, captureElapsedTimeMillis = 0) }
+						_uiState.update {
+							it.copy(
+								capturingActive = false,
+								captureCount = 0,
+								captureElapsedTimeMillis = 0,
+								captureEstimatedTimeMillis = 0
+							)
+						}
 						stopTimer()
 					}
 				}
@@ -172,6 +213,7 @@ class DashboardViewModel internal constructor(
 		val frameCount = uiState.value.frameCount.textState.text.toIntOrNull() ?: return
 
 		timerJob = viewModelScope.launch(Dispatchers.Default) {
+			_uiState.update { it.copy(captureEstimatedTimeMillis = (exposureTime * frameCount * 1000L)) }
 			delay(3000)
 
 			val captureStarTime = System.currentTimeMillis()
@@ -181,12 +223,18 @@ class DashboardViewModel internal constructor(
 				_uiState.update {
 					it.copy(
 						captureCount = (it.captureCount ?: 0) + 1,
-						captureElapsedTimeMillis = System.currentTimeMillis() - captureStarTime
+						captureElapsedTimeMillis = System.currentTimeMillis() - captureStarTime,
 					)
 				}
 			}
 
-			_uiState.update { it.copy(captureCount = 0, captureElapsedTimeMillis = 0) }
+			_uiState.update {
+				it.copy(
+					captureCount = 0,
+					captureElapsedTimeMillis = 0,
+					captureEstimatedTimeMillis = 0
+				)
+			}
 
 			stopTimer()
 			photoControlEvent(PhotoControlEvent.EndCapture)
@@ -195,6 +243,13 @@ class DashboardViewModel internal constructor(
 
 	private fun stopTimer() {
 		timerJob?.cancel()
+	}
+
+	internal fun notifyAboutChange(settingItem: SettingItem, value: Int?) {
+		Timber.d("notifyAboutChange, settingItem: $settingItem, value: $value")
+		viewModelScope.launch(Dispatchers.Default) {
+			setNewSettings(SetNewSettingsUseCase.Input(settingItem, value))
+		}
 	}
 }
 
@@ -209,6 +264,7 @@ data class DashboardUiState internal constructor(
 	val captureStartTime: Long? = null,
 	val captureCount: Int? = null,
 	val captureElapsedTimeMillis: Long? = null,
+	val captureEstimatedTimeMillis: Long? = null,
 	val exposeTime: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val frameCount: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherFocalLength: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
@@ -225,7 +281,7 @@ data class DashboardUiState internal constructor(
 		val ditherValid = ditherFocalLength.isValid() && ditherPixelSize.isValid()
 
 		return if (ditheringEnabled) {
-			return ditherValid && intervalometerValid
+			ditherValid && intervalometerValid
 		} else {
 			intervalometerValid
 		}

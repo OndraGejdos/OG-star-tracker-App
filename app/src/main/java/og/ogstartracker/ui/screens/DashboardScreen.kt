@@ -13,8 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,9 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
+import og.ogstartracker.domain.usecases.SettingItem
 import og.ogstartracker.ui.components.cards.ChecklistCard
 import og.ogstartracker.ui.components.cards.ConnectionCard
 import og.ogstartracker.ui.components.cards.PhotoControlCard
@@ -51,7 +56,15 @@ fun DashboardScreen(
 ) {
 	SystemUiHelper(statusIconsLight = true, navigationIconsLight = true)
 
+	val scope = rememberCoroutineScope()
+
 	val uiState by viewModel.uiState.collectAsState()
+
+	LaunchedEffect(Unit) {
+		scope.launch {
+			viewModel.settingsItemsFlow.first()
+		}
+	}
 
 	DashboardScreenContent(
 		uiState = uiState,
@@ -64,7 +77,8 @@ fun DashboardScreen(
 		},
 		onInfoClick = {
 			navController.navigate("info")
-		}
+		},
+		notifyAboutChange = viewModel::notifyAboutChange,
 	)
 }
 
@@ -76,6 +90,7 @@ private fun DashboardScreenContent(
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	onGearClick: () -> Unit,
+	notifyAboutChange: (SettingItem, Int?) -> Unit,
 	onInfoClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -90,7 +105,8 @@ private fun DashboardScreenContent(
 				onSlewControlEvent = onSlewControlEvent,
 				onPhotoControlEvent = onPhotoControlEvent,
 				onGearClick = onGearClick,
-				onInfoClick = onInfoClick
+				onInfoClick = onInfoClick,
+				notifyAboutChange = notifyAboutChange
 			)
 		},
 		containerColor = MaterialTheme.colorScheme.surface,
@@ -104,6 +120,7 @@ private fun DashboardScreenLayout(
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	onGearClick: () -> Unit,
+	notifyAboutChange: (SettingItem, Int?) -> Unit,
 	onInfoClick: () -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
@@ -187,7 +204,7 @@ private fun DashboardScreenLayout(
 			SlewControlCard(
 				slewControlCommands = onSlewControlEvent,
 				stepSize = uiState.slewValue,
-				enabled = uiState.trackerConnected
+				enabled = uiState.trackerConnected,
 			)
 		}
 
@@ -195,6 +212,7 @@ private fun DashboardScreenLayout(
 			PhotoControlCard(
 				uiState = uiState,
 				onPhotoControlEvent = onPhotoControlEvent,
+				notifyAboutChange = notifyAboutChange
 			)
 		}
 	}
@@ -211,7 +229,8 @@ internal fun HomeScreenContentPreview() {
 			onSlewControlEvent = {},
 			onPhotoControlEvent = {},
 			onInfoClick = {},
-			onGearClick = {}
+			onGearClick = {},
+			notifyAboutChange = { _, _ -> }
 		)
 	}
 }

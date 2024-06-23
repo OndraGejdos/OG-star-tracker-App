@@ -18,7 +18,9 @@ val appModule = module {
 			trackerRight = get(),
 			startCapture = get(),
 			abortCapture = get(),
-			getCurrentHemisphereFlow = get()
+			getCurrentHemisphereFlow = get(),
+			setNewSettings = get(),
+			getSettings = get()
 		)
 	}
 

@@ -27,6 +27,7 @@
 	<string name="photo_control_taken_exposures">Počet provedených expozic</string>
 	<string name="photo_control_taken_exposures_value">%d/%d</string>
 	<string name="photo_control_elapsed_time">Uběhnutý čas</string>
+	<string name="photo_control_estimated_time">Délka časosběru</string>
 	<string name="photo_control_elapsed_time_hour">h</string>
 	<string name="photo_control_elapsed_time_minute">m</string>
 	<string name="photo_control_elapsed_time_second">s</string>

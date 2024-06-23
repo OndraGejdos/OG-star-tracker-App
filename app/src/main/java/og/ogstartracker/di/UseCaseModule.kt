@@ -3,7 +3,9 @@ package og.ogstartracker.di
 import og.ogstartracker.domain.usecases.AbortCaptureUseCase
 import og.ogstartracker.domain.usecases.GetCurrentHemisphereFlowUseCase
 import og.ogstartracker.domain.usecases.GetCurrentStateUseCase
+import og.ogstartracker.domain.usecases.GetSettingsUseCase
 import og.ogstartracker.domain.usecases.SetCurrentHemisphereUseCase
+import og.ogstartracker.domain.usecases.SetNewSettingsUseCase
 import og.ogstartracker.domain.usecases.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
 import og.ogstartracker.domain.usecases.StopSiderealTrackingUseCase
@@ -63,6 +65,18 @@ val useCaseModule = module {
 
 	single {
 		SetCurrentHemisphereUseCase(
+			dataStoreRepository = get()
+		)
+	}
+
+	single {
+		GetSettingsUseCase(
+			dataStoreRepository = get()
+		)
+	}
+
+	single {
+		SetNewSettingsUseCase(
 			dataStoreRepository = get()
 		)
 	}
