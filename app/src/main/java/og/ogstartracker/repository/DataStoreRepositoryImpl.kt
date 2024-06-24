@@ -3,6 +3,7 @@ package og.ogstartracker.repository
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -43,6 +44,9 @@ class DataStoreRepositoryImpl constructor(
 	override val ditherActive: Flow<Int> = context.dataStore.data
 		.map { preferences -> preferences[SETTINGS_DITHER_ACTIVE] ?: 0 }
 
+	override val userSawOnboarding: Flow<Boolean> = context.dataStore.data
+		.map { preferences -> preferences[USER_SAW_ONBOARDING] ?: false }
+
 	override suspend fun updateHemisphere(hemisphere: Hemisphere) {
 		context.dataStore.edit { preferences ->
 			preferences[HEMISPHERE] = hemisphere.arduinoValue
@@ -63,6 +67,12 @@ class DataStoreRepositoryImpl constructor(
 		}
 	}
 
+	override suspend fun setUserSawOnboarding() {
+		context.dataStore.edit { preferences ->
+			preferences[USER_SAW_ONBOARDING] = true
+		}
+	}
+
 	companion object {
 		private const val PREFS_DATA_STORE_NAME = "store"
 		private val HEMISPHERE = intPreferencesKey("hemisphere")
@@ -72,5 +82,6 @@ class DataStoreRepositoryImpl constructor(
 		private val SETTINGS_FOCUS_LENGTH = intPreferencesKey("focus_length")
 		private val SETTINGS_PIXEL_SIZE = intPreferencesKey("pixel_size")
 		private val SETTINGS_DITHER_ACTIVE = intPreferencesKey("dither_active")
+		private val USER_SAW_ONBOARDING = booleanPreferencesKey("onboarding")
 	}
 }

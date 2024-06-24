@@ -16,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,6 +35,7 @@ import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.domain.usecases.SettingItem
+import og.ogstartracker.ui.components.InfoDialog
 import og.ogstartracker.ui.components.cards.ChecklistCard
 import og.ogstartracker.ui.components.cards.ConnectionCard
 import og.ogstartracker.ui.components.cards.PhotoControlCard
@@ -56,9 +60,15 @@ fun DashboardScreen(
 ) {
 	SystemUiHelper(statusIconsLight = true, navigationIconsLight = true)
 
+	var showInfoDialog by remember { mutableStateOf(false) }
+
 	val scope = rememberCoroutineScope()
 
 	val uiState by viewModel.uiState.collectAsState()
+
+	if (uiState.shouldShowOnboardingDialog) {
+		showInfoDialog = true
+	}
 
 	LaunchedEffect(Unit) {
 		scope.launch {
@@ -76,10 +86,17 @@ fun DashboardScreen(
 			navController.navigate("settings")
 		},
 		onInfoClick = {
-			navController.navigate("info")
+			showInfoDialog = true
 		},
 		notifyAboutChange = viewModel::notifyAboutChange,
 	)
+
+	if (showInfoDialog) {
+		InfoDialog(onHide = {
+			viewModel.setUserSawOnboard()
+			showInfoDialog = false
+		})
+	}
 }
 
 @Composable

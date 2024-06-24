@@ -20,7 +20,11 @@ interface DataStoreRepository {
 
 	val ditherActive: Flow<Int>
 
+	val userSawOnboarding: Flow<Boolean>
+
 	suspend fun updateHemisphere(hemisphere: Hemisphere)
 
 	suspend fun setNewSettings(settingItem: SettingItem, value: Int?)
+
+	suspend fun setUserSawOnboarding()
 }

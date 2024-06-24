@@ -16,9 +16,11 @@ import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.domain.usecases.AbortCaptureUseCase
+import og.ogstartracker.domain.usecases.DidUserSeeOnboardingUseCase
 import og.ogstartracker.domain.usecases.GetCurrentHemisphereFlowUseCase
 import og.ogstartracker.domain.usecases.GetSettingsUseCase
 import og.ogstartracker.domain.usecases.SetNewSettingsUseCase
+import og.ogstartracker.domain.usecases.SetUserSawOnboardingUseCase
 import og.ogstartracker.domain.usecases.SettingItem
 import og.ogstartracker.domain.usecases.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
@@ -43,6 +45,8 @@ class DashboardViewModel internal constructor(
 	private val startCapture: StartCaptureUseCase,
 	private val abortCapture: AbortCaptureUseCase,
 	private val setNewSettings: SetNewSettingsUseCase,
+	private val setUserSawOnboarding: SetUserSawOnboardingUseCase,
+	didUserSeeOnboarding: DidUserSeeOnboardingUseCase,
 	getCurrentHemisphereFlow: GetCurrentHemisphereFlowUseCase,
 	getSettings: GetSettingsUseCase,
 ) : ViewModel() {
@@ -75,8 +79,12 @@ class DashboardViewModel internal constructor(
 	val uiState = combine(
 		getCurrentHemisphereFlow(),
 		_uiState,
-	) { hemisphere, uiState ->
-		uiState.copy(hemisphere = hemisphere)
+		didUserSeeOnboarding()
+	) { hemisphere, uiState, userSawOnboarding ->
+		uiState.copy(
+			hemisphere = hemisphere,
+			shouldShowOnboardingDialog = !userSawOnboarding
+		)
 	}.stateIn(viewModelScope, WhileUiSubscribed, DashboardUiState())
 
 	internal fun changeChecklist() {
@@ -251,6 +259,12 @@ class DashboardViewModel internal constructor(
 			setNewSettings(SetNewSettingsUseCase.Input(settingItem, value))
 		}
 	}
+
+	internal fun setUserSawOnboard() {
+		viewModelScope.launch(Dispatchers.Default) {
+			setUserSawOnboarding()
+		}
+	}
 }
 
 data class DashboardUiState internal constructor(
@@ -265,6 +279,7 @@ data class DashboardUiState internal constructor(
 	val captureCount: Int? = null,
 	val captureElapsedTimeMillis: Long? = null,
 	val captureEstimatedTimeMillis: Long? = null,
+	val shouldShowOnboardingDialog: Boolean = false,
 	val exposeTime: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val frameCount: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherFocalLength: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),

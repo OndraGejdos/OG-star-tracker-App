@@ -20,7 +20,9 @@ val appModule = module {
 			abortCapture = get(),
 			getCurrentHemisphereFlow = get(),
 			setNewSettings = get(),
-			getSettings = get()
+			getSettings = get(),
+			setUserSawOnboarding = get(),
+			didUserSeeOnboarding = get()
 		)
 	}
 

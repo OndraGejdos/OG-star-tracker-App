@@ -6,16 +6,15 @@ lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
 kotlinCompilerExtension = "1.5.8"
 kotlinGradlePlugin = "1.9.22"
-composeBom = "2024.04.01"
+composeBom = "2024.06.00"
 uiTooling = "1.6.8"
 accompanist = "0.34.0"
 navigationRuntimeKtx = "2.7.7"
 timber = "5.0.1"
-serializationJson = "1.6.2"
-hiltAndroidGradlePlugin = "2.50"
-kotlinxSerialization = { id = "kotlinx-serialization" }
+serializationJson = "1.6.3"
 junit = "4.13.2"
-navigationCompose = "2.7.6"
+navigationCompose = "2.7.7"
+markdown = "0.5.0"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 datastore = "1.1.1"
@@ -24,10 +23,10 @@ koin = "3.5.6"
 material = "1.12.0"
 retrofit = "2.9.0"
 okhttp = "4.12.0"
-kotlinKsp = "1.9.22-1.0.17"
+kotlinKsp = "1.9.22-1.0.18"
 jetbrainsKotlinJvm = "1.9.22"
-splashScreen = "1.1.0-alpha02"
-gradle = "8.4.0-rc02"
+splashScreen = "1.1.0-rc01"
+gradle = "8.4.2"
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 
 
@@ -51,7 +50,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 kotlinKspGradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kotlinKsp" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 kotlinJdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinGradlePlugin" }
-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
 koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koinCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
@@ -63,6 +61,7 @@ retrofitConverter = { module = "com.squareup.retrofit2:converter-moshi", version
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "markdown" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
