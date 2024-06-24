@@ -1,11 +1,11 @@
-package og.ogstartracker.domain.usecases
+package og.ogstartracker.domain.usecases.arduino
 
 import og.ogstartracker.domain.usecases.base.ResourceSuspendUseCase
 import og.ogstartracker.repository.ArduinoRepository
 
-class TurnTrackerLeftUseCase constructor(
+class TurnTrackerRightUseCase constructor(
 	private val repository: ArduinoRepository
 ) : ResourceSuspendUseCase<Int, Unit> {
 
-	override suspend fun invoke(input: Int) = repository.turnLeft(input)
+	override suspend fun invoke(input: Int) = repository.turnRight(input)
 }

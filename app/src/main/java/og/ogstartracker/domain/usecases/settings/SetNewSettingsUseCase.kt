@@ -1,4 +1,4 @@
-package og.ogstartracker.domain.usecases
+package og.ogstartracker.domain.usecases.settings
 
 import og.ogstartracker.domain.usecases.base.SuspendUseCase
 import og.ogstartracker.repository.DataStoreRepository

@@ -1,18 +1,18 @@
 package og.ogstartracker.di
 
-import og.ogstartracker.domain.usecases.AbortCaptureUseCase
-import og.ogstartracker.domain.usecases.DidUserSeeOnboardingUseCase
-import og.ogstartracker.domain.usecases.GetCurrentHemisphereFlowUseCase
-import og.ogstartracker.domain.usecases.GetCurrentStateUseCase
-import og.ogstartracker.domain.usecases.GetSettingsUseCase
-import og.ogstartracker.domain.usecases.SetCurrentHemisphereUseCase
-import og.ogstartracker.domain.usecases.SetNewSettingsUseCase
-import og.ogstartracker.domain.usecases.SetUserSawOnboardingUseCase
-import og.ogstartracker.domain.usecases.StartCaptureUseCase
-import og.ogstartracker.domain.usecases.StartSiderealTrackingUseCase
-import og.ogstartracker.domain.usecases.StopSiderealTrackingUseCase
-import og.ogstartracker.domain.usecases.TurnTrackerLeftUseCase
-import og.ogstartracker.domain.usecases.TurnTrackerRightUseCase
+import og.ogstartracker.domain.usecases.arduino.AbortCaptureUseCase
+import og.ogstartracker.domain.usecases.onboarding.DidUserSeeOnboardingUseCase
+import og.ogstartracker.domain.usecases.settings.GetCurrentHemisphereFlowUseCase
+import og.ogstartracker.domain.usecases.arduino.GetCurrentStateUseCase
+import og.ogstartracker.domain.usecases.settings.GetSettingsUseCase
+import og.ogstartracker.domain.usecases.settings.SetCurrentHemisphereUseCase
+import og.ogstartracker.domain.usecases.settings.SetNewSettingsUseCase
+import og.ogstartracker.domain.usecases.onboarding.SetUserSawOnboardingUseCase
+import og.ogstartracker.domain.usecases.arduino.StartCaptureUseCase
+import og.ogstartracker.domain.usecases.arduino.StartSiderealTrackingUseCase
+import og.ogstartracker.domain.usecases.arduino.StopSiderealTrackingUseCase
+import og.ogstartracker.domain.usecases.arduino.TurnTrackerLeftUseCase
+import og.ogstartracker.domain.usecases.arduino.TurnTrackerRightUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {

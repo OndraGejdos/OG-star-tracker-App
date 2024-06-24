@@ -1,4 +1,4 @@
-package og.ogstartracker.domain.usecases
+package og.ogstartracker.domain.usecases.settings
 
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.domain.usecases.base.FlowProviderUseCase

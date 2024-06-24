@@ -61,6 +61,13 @@ android {
 			signingConfig = signingConfigs.getByName("release")
 		}
 	}
+
+	productFlavors {
+		create("dev") {
+			buildConfigField("String", "TRACKER_URL", "\"http://www.tracker.com\"")
+		}
+	}
+
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
@@ -70,6 +77,7 @@ android {
 	}
 	buildFeatures {
 		compose = true
+		buildConfig = true
 	}
 	composeOptions {
 		kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtension.get()

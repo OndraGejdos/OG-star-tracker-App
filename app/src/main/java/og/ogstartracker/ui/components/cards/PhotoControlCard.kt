@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import og.ogstartracker.Constants
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
-import og.ogstartracker.domain.usecases.SettingItem
+import og.ogstartracker.domain.usecases.settings.SettingItem
 import og.ogstartracker.ui.components.common.CustomSwitch
 import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.components.common.input.ActionInput

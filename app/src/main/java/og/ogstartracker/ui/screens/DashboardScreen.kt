@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
-import og.ogstartracker.domain.usecases.SettingItem
+import og.ogstartracker.domain.usecases.settings.SettingItem
 import og.ogstartracker.ui.components.InfoDialog
 import og.ogstartracker.ui.components.cards.ChecklistCard
 import og.ogstartracker.ui.components.cards.ConnectionCard

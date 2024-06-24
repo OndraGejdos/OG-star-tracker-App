@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import og.ogstartracker.domain.models.Hemisphere
-import og.ogstartracker.domain.usecases.GetCurrentHemisphereFlowUseCase
-import og.ogstartracker.domain.usecases.SetCurrentHemisphereUseCase
+import og.ogstartracker.domain.usecases.settings.GetCurrentHemisphereFlowUseCase
+import og.ogstartracker.domain.usecases.settings.SetCurrentHemisphereUseCase
 import og.ogstartracker.utils.WhileUiSubscribed
 
 class SettingsViewModel internal constructor(

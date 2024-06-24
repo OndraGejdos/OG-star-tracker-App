@@ -1,4 +1,4 @@
-package og.ogstartracker.domain.usecases
+package og.ogstartracker.domain.usecases.arduino
 
 import og.ogstartracker.domain.usecases.base.ResourceSuspendProviderUseCase
 import og.ogstartracker.repository.ArduinoRepository

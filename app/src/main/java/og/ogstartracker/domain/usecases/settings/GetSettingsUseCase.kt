@@ -1,4 +1,4 @@
-package og.ogstartracker.domain.usecases
+package og.ogstartracker.domain.usecases.settings
 
 import kotlinx.coroutines.flow.Flow
 import og.ogstartracker.domain.usecases.base.FlowUseCase

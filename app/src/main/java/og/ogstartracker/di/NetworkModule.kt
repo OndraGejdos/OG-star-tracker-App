@@ -1,6 +1,7 @@
 package og.ogstartracker.di
 
 import com.squareup.moshi.Moshi
+import og.ogstartracker.BuildConfig
 import og.ogstartracker.network.ArduinoApi
 import og.ogstartracker.network.EmptyBodyConverterFactory
 import og.ogstartracker.network.UnitConverterFactory
@@ -53,7 +54,7 @@ val networkModule = module {
 
 	single {
 		provideRetrofit(
-			url = "http://www.tracker.com",
+			url = BuildConfig.TRACKER_URL,
 			scope = this,
 			interceptors = listOf(
 				get(named(HTTP_LOGGING_INTERCEPTOR))

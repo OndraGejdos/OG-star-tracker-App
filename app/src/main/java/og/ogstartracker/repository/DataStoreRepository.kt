@@ -2,7 +2,7 @@ package og.ogstartracker.repository
 
 import kotlinx.coroutines.flow.Flow
 import og.ogstartracker.domain.models.Hemisphere
-import og.ogstartracker.domain.usecases.SettingItem
+import og.ogstartracker.domain.usecases.settings.SettingItem
 
 interface DataStoreRepository {
 

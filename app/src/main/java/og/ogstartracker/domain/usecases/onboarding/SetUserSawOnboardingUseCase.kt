@@ -1,4 +1,4 @@
-package og.ogstartracker.domain.usecases
+package og.ogstartracker.domain.usecases.onboarding
 
 import og.ogstartracker.domain.usecases.base.SuspendProviderUseCase
 import og.ogstartracker.repository.DataStoreRepository
