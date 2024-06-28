@@ -6,7 +6,7 @@ import og.ogstartracker.repository.ArduinoRepository
 
 class StartSiderealTrackingUseCase constructor(
 	private val repository: ArduinoRepository
-) : ResourceSuspendUseCase<Hemisphere, Unit> {
+) : ResourceSuspendUseCase<Hemisphere, String> {
 
 	override suspend fun invoke(input: Hemisphere) = repository.startSideRealTracking(input)
 }

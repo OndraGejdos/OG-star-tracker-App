@@ -5,7 +5,7 @@ import og.ogstartracker.repository.ArduinoRepository
 
 class TurnTrackerRightUseCase constructor(
 	private val repository: ArduinoRepository
-) : ResourceSuspendUseCase<Int, Unit> {
+) : ResourceSuspendUseCase<Int, String> {
 
 	override suspend fun invoke(input: Int) = repository.turnRight(input)
 }

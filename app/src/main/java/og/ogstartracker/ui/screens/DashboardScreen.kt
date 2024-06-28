@@ -7,6 +7,7 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.provider.Settings.ACTION_WIFI_SETTINGS
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -108,6 +109,13 @@ fun DashboardScreen(
 			}
 		}
 	})
+
+	LaunchedEffect(uiState.lastMessage) {
+		uiState.lastMessage?.let { message ->
+			Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+			viewModel.resetMessage()
+		}
+	}
 
 	var showInfoDialog by remember { mutableStateOf(false) }
 

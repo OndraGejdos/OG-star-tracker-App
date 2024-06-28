@@ -3,8 +3,6 @@ package og.ogstartracker.di
 import com.squareup.moshi.Moshi
 import og.ogstartracker.BuildConfig
 import og.ogstartracker.network.ArduinoApi
-import og.ogstartracker.network.EmptyBodyConverterFactory
-import og.ogstartracker.network.UnitConverterFactory
 import og.ogstartracker.repository.ArduinoRepository
 import og.ogstartracker.repository.ArduinoRepositoryImpl
 import og.ogstartracker.repository.DataStoreRepository
@@ -14,11 +12,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
-import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -29,7 +26,6 @@ val networkModule = module {
 
 	fun provideRetrofit(
 		url: String,
-		scope: Scope,
 		interceptors: List<Interceptor>,
 	): Retrofit {
 		val builder = OkHttpClient.Builder()
@@ -44,18 +40,13 @@ val networkModule = module {
 		return Retrofit.Builder()
 			.baseUrl(url)
 			.client(client)
-			.addConverterFactory(EmptyBodyConverterFactory)
-			.addConverterFactory(UnitConverterFactory)
-			.addConverterFactory(
-				MoshiConverterFactory.create(scope.get()).withNullSerialization()
-			)
+			.addConverterFactory(ScalarsConverterFactory.create())
 			.build()
 	}
 
 	single {
 		provideRetrofit(
 			url = BuildConfig.TRACKER_URL,
-			scope = this,
 			interceptors = listOf(
 				get(named(HTTP_LOGGING_INTERCEPTOR))
 			),

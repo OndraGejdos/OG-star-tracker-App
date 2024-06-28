@@ -5,7 +5,7 @@ import og.ogstartracker.repository.ArduinoRepository
 
 class StopSiderealTrackingUseCase constructor(
 	private val repository: ArduinoRepository
-) : ResourceSuspendProviderUseCase<Unit> {
+) : ResourceSuspendProviderUseCase<String> {
 
 	override suspend fun invoke() = repository.stopSideRealTracking()
 }

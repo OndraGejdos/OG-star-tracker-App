@@ -5,7 +5,7 @@ import og.ogstartracker.repository.ArduinoRepository
 
 class StartCaptureUseCase constructor(
 	private val repository: ArduinoRepository
-) : ResourceSuspendUseCase<StartCaptureUseCase.Input, Unit> {
+) : ResourceSuspendUseCase<StartCaptureUseCase.Input, String> {
 
 	override suspend fun invoke(input: Input) = repository.startCapture(
 		exposure = input.exposure,

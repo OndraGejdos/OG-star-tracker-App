@@ -100,6 +100,7 @@ dependencies {
 	implementation(libs.permissions)
 	implementation(libs.markdown)
 	implementation(libs.retrofit)
+	implementation(libs.retrofitScalars)
 	implementation(libs.retrofitConverter)
 	implementation(libs.okhttp)
 	implementation(libs.timber)

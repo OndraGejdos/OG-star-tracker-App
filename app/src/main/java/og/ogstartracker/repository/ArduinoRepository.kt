@@ -1,17 +1,20 @@
 package og.ogstartracker.repository
 
+import kotlinx.coroutines.flow.StateFlow
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.network.Resource
 
 interface ArduinoRepository {
 
-	suspend fun startSideRealTracking(direction: Hemisphere): Resource<Unit>
+	val lastArduinoMessage: StateFlow<String?>
 
-	suspend fun stopSideRealTracking(): Resource<Unit>
+	suspend fun startSideRealTracking(direction: Hemisphere): Resource<String>
 
-	suspend fun turnLeft(speed: Int): Resource<Unit>
+	suspend fun stopSideRealTracking(): Resource<String>
 
-	suspend fun turnRight(speed: Int): Resource<Unit>
+	suspend fun turnLeft(speed: Int): Resource<String>
+
+	suspend fun turnRight(speed: Int): Resource<String>
 
 	suspend fun startCapture(
 		exposure: Int,
@@ -19,9 +22,11 @@ interface ArduinoRepository {
 		focalLength: Int,
 		pixSize: Int,
 		ditherEnabled: Int,
-	): Resource<Unit>
+	): Resource<String>
 
-	suspend fun abortCapture(): Resource<Unit>
+	suspend fun abortCapture(): Resource<String>
 
 	suspend fun getStatus(): Resource<String>
+
+	suspend fun resetLastMessage()
 }

@@ -9,20 +9,20 @@ interface ArduinoApi {
 	@GET("on")
 	suspend fun startSiderealTracking(
 		@Query("direction") direction: Int
-	): Response<Unit>
+	): Response<String>
 
 	@GET("off")
-	suspend fun stopSiderealTracking(): Response<Unit>
+	suspend fun stopSiderealTracking(): Response<String>
 
 	@GET("left")
 	suspend fun turnLeft(
 		@Query("speed") speed: Int
-	): Response<Unit>
+	): Response<String>
 
 	@GET("right")
 	suspend fun turnRight(
 		@Query("speed") speed: Int
-	): Response<Unit>
+	): Response<String>
 
 	@GET("start")
 	suspend fun startCapture(
@@ -31,10 +31,10 @@ interface ArduinoApi {
 		@Query("focalLength") focalLength: Int,
 		@Query("pixSize") pixSize: Int,
 		@Query("ditherEnabled") ditherEnabled: Int,
-	): Response<Unit>
+	): Response<String>
 
 	@GET("abort")
-	suspend fun abortCapture(): Response<Unit>
+	suspend fun abortCapture(): Response<String>
 
 	@GET("status")
 	suspend fun getStatus(): Response<String>

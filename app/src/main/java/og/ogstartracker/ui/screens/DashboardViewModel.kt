@@ -10,22 +10,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import og.ogstartracker.Config.CAPTURING_INITIAL_DELAY
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.domain.models.Hemisphere
-import og.ogstartracker.domain.usecases.arduino.AbortCaptureUseCase
-import og.ogstartracker.domain.usecases.arduino.GetCurrentStateUseCase
 import og.ogstartracker.domain.usecases.arduino.StartCaptureUseCase
-import og.ogstartracker.domain.usecases.arduino.StartSiderealTrackingUseCase
-import og.ogstartracker.domain.usecases.arduino.StopSiderealTrackingUseCase
-import og.ogstartracker.domain.usecases.arduino.TurnTrackerLeftUseCase
-import og.ogstartracker.domain.usecases.arduino.TurnTrackerRightUseCase
-import og.ogstartracker.domain.usecases.onboarding.DidUserSeeOnboardingUseCase
-import og.ogstartracker.domain.usecases.onboarding.SetUserSawOnboardingUseCase
-import og.ogstartracker.domain.usecases.settings.GetCurrentHemisphereFlowUseCase
-import og.ogstartracker.domain.usecases.settings.GetSettingsUseCase
+import og.ogstartracker.domain.usecases.providers.DashboardUseCaseProvider
 import og.ogstartracker.domain.usecases.settings.SetNewSettingsUseCase
 import og.ogstartracker.domain.usecases.settings.SettingItem
 import og.ogstartracker.ui.components.common.input.NotEmptyValidator
@@ -37,31 +29,22 @@ import og.ogstartracker.utils.vibrationPatternClick
 import og.ogstartracker.utils.vibrationPatternThreeClick
 import timber.log.Timber
 
+private const val SECOND = 1000L
+
 class DashboardViewModel internal constructor(
 	private val vibratorController: VibratorController,
-	private val startSiderealTracking: StartSiderealTrackingUseCase,
-	private val stopSiderealTracking: StopSiderealTrackingUseCase,
-	private val trackerLeft: TurnTrackerLeftUseCase,
-	private val trackerRight: TurnTrackerRightUseCase,
-	private val startCapture: StartCaptureUseCase,
-	private val stateUseCase: GetCurrentStateUseCase,
-	private val abortCapture: AbortCaptureUseCase,
-	private val setNewSettings: SetNewSettingsUseCase,
-	private val setUserSawOnboarding: SetUserSawOnboardingUseCase,
-	didUserSeeOnboarding: DidUserSeeOnboardingUseCase,
-	getCurrentHemisphereFlow: GetCurrentHemisphereFlowUseCase,
-	getSettings: GetSettingsUseCase,
+	private val useCases: DashboardUseCaseProvider,
 ) : ViewModel() {
 
 	private var timerJob: Job? = null
 
 	val settingsItemsFlow = og.ogstartracker.utils.combine(
-		getSettings(SettingItem.PIXEL_SIZE),
-		getSettings(SettingItem.FOCAL_LENGTH),
-		getSettings(SettingItem.EXPOSURE_COUNT),
-		getSettings(SettingItem.EXPOSURE_TIME),
-		getSettings(SettingItem.DITHER_ACTIVE),
-		getSettings(SettingItem.SLEW_SPEED),
+		useCases.getSettings(SettingItem.PIXEL_SIZE),
+		useCases.getSettings(SettingItem.FOCAL_LENGTH),
+		useCases.getSettings(SettingItem.EXPOSURE_COUNT),
+		useCases.getSettings(SettingItem.EXPOSURE_TIME),
+		useCases.getSettings(SettingItem.DITHER_ACTIVE),
+		useCases.getSettings(SettingItem.SLEW_SPEED),
 	) { pixelSize, focalLength, exposureCount, exposureTime, ditherActive, slewSpeed ->
 		_uiState.update {
 			it.copy(
@@ -79,21 +62,17 @@ class DashboardViewModel internal constructor(
 
 	private val _uiState = MutableStateFlow(DashboardUiState())
 	val uiState = combine(
-		getCurrentHemisphereFlow(),
+		useCases.getCurrentHemisphereFlow(),
 		_uiState,
-		didUserSeeOnboarding()
-	) { hemisphere, uiState, userSawOnboarding ->
+		useCases.didUserSeeOnboarding(),
+		useCases.getLastArduinoMessage()
+	) { hemisphere, uiState, userSawOnboarding, lastMessage ->
 		uiState.copy(
 			hemisphere = hemisphere,
-			shouldShowOnboardingDialog = !userSawOnboarding
+			shouldShowOnboardingDialog = !userSawOnboarding,
+			lastMessage = lastMessage
 		)
 	}.stateIn(viewModelScope, WhileUiSubscribed, DashboardUiState())
-
-	init {
-		viewModelScope.launch(Dispatchers.Default) {
-			stateUseCase()
-		}
-	}
 
 	internal fun changeChecklist() {
 		_uiState.update { it.copy(openedCheckbox = !it.openedCheckbox) }
@@ -102,20 +81,19 @@ class DashboardViewModel internal constructor(
 	internal fun changeSidereal(active: Boolean) {
 		if (active) {
 			sendCommand {
-				startSiderealTracking(uiState.value.hemisphere ?: return@sendCommand).onSuccess {
+				useCases.startSiderealTracking(uiState.value.hemisphere ?: return@sendCommand).onSuccess {
 					vibratorController.startVibrations(vibrationPatternThreeClick)
 				}
 				_uiState.update { it.copy(siderealActive = true) }
 			}
 		} else {
 			sendCommand {
-				stopSiderealTracking().onSuccess {
+				useCases.stopSiderealTracking().onSuccess {
 					vibratorController.startVibrations(vibrationPatternClick)
 				}
 				_uiState.update { it.copy(siderealActive = false) }
 			}
 		}
-
 	}
 
 	internal fun slewControlEvent(slewControlEvent: SlewControlEvent) {
@@ -136,7 +114,7 @@ class DashboardViewModel internal constructor(
 
 			SlewControlEvent.RotateAnticlockwise -> {
 				sendCommand {
-					trackerLeft(uiState.value.slewValue).onSuccess {
+					useCases.trackerLeft(uiState.value.slewValue).onSuccess {
 						vibratorController.startVibrations(vibrationPatternClick)
 					}
 				}
@@ -144,7 +122,7 @@ class DashboardViewModel internal constructor(
 
 			SlewControlEvent.RotateClockwise -> {
 				sendCommand {
-					trackerRight(uiState.value.slewValue).onSuccess {
+					useCases.trackerRight(uiState.value.slewValue).onSuccess {
 						vibratorController.startVibrations(vibrationPatternClick)
 					}
 				}
@@ -172,7 +150,7 @@ class DashboardViewModel internal constructor(
 
 			PhotoControlEvent.EndCapture -> {
 				sendCommand {
-					abortCapture().onSuccess {
+					useCases.abortCapture().onSuccess {
 						vibratorController.startVibrations(vibrationPatternClick)
 						_uiState.update {
 							it.copy(
@@ -189,7 +167,7 @@ class DashboardViewModel internal constructor(
 
 			PhotoControlEvent.StartCapture -> {
 				sendCommand {
-					startCapture(
+					useCases.startCapture(
 						StartCaptureUseCase.Input(
 							exposure = uiState.value.exposeTime.textState.text.toIntOrNull() ?: return@sendCommand,
 							numExposures = uiState.value.frameCount.textState.text.toIntOrNull() ?: return@sendCommand,
@@ -229,13 +207,13 @@ class DashboardViewModel internal constructor(
 		val frameCount = uiState.value.frameCount.textState.text.toIntOrNull() ?: return
 
 		timerJob = viewModelScope.launch(Dispatchers.Default) {
-			_uiState.update { it.copy(captureEstimatedTimeMillis = (exposureTime * frameCount * 1000L)) }
-			delay(3000)
+			_uiState.update { it.copy(captureEstimatedTimeMillis = (exposureTime * frameCount * SECOND)) }
+			delay(CAPTURING_INITIAL_DELAY)
 
 			val captureStarTime = System.currentTimeMillis()
 
-			while (exposureTime * frameCount > ((System.currentTimeMillis() - captureStarTime) / 1000)) {
-				delay(exposureTime * 1000L)
+			while (exposureTime * frameCount > ((System.currentTimeMillis() - captureStarTime) / SECOND)) {
+				delay(exposureTime * SECOND)
 				_uiState.update {
 					it.copy(
 						captureCount = (it.captureCount ?: 0) + 1,
@@ -264,13 +242,13 @@ class DashboardViewModel internal constructor(
 	internal fun notifyAboutChange(settingItem: SettingItem, value: Int?) {
 		Timber.d("notifyAboutChange, settingItem: $settingItem, value: $value")
 		viewModelScope.launch(Dispatchers.Default) {
-			setNewSettings(SetNewSettingsUseCase.Input(settingItem, value))
+			useCases.setNewSettings(SetNewSettingsUseCase.Input(settingItem, value))
 		}
 	}
 
 	internal fun setUserSawOnboard() {
 		viewModelScope.launch(Dispatchers.Default) {
-			setUserSawOnboarding()
+			useCases.setUserSawOnboarding()
 		}
 	}
 
@@ -280,6 +258,12 @@ class DashboardViewModel internal constructor(
 
 	internal fun setConnection(connected: Boolean) {
 		_uiState.update { it.copy(trackerConnected = connected) }
+	}
+
+	internal fun resetMessage() {
+		viewModelScope.launch(Dispatchers.Default) {
+			useCases.resetLastArduinoMessage()
+		}
 	}
 }
 
@@ -291,6 +275,7 @@ data class DashboardUiState internal constructor(
 	val siderealActive: Boolean = false,
 	val ditheringEnabled: Boolean = false,
 	val capturingActive: Boolean = false,
+	val lastMessage: String? = null,
 	val slewValue: Int = 0,
 	val captureStartTime: Long? = null,
 	val captureCount: Int? = null,

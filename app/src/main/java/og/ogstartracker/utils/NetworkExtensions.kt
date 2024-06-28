@@ -13,9 +13,6 @@ import java.net.UnknownHostException
 
 suspend fun <E : Any> tryOnline(
 	doOnSuccess: suspend ((E?) -> Unit) = {},
-	parseError: suspend ((Response<E>) -> Resource<E>) = { response ->
-		parseResponseToResource(response)
-	},
 	request: suspend () -> Response<E>
 ): Resource<E> {
 	return try {
@@ -24,8 +21,7 @@ suspend fun <E : Any> tryOnline(
 			doOnSuccess(response.body())
 			ResourceUtils.success(response.body())
 		} else {
-//			val resource = parseError(response)
-//			resource
+			//don't handle any errors
 			ResourceUtils.success()
 		}
 	} catch (e: HttpException) {
