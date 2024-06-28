@@ -22,7 +22,8 @@ val appModule = module {
 			setNewSettings = get(),
 			getSettings = get(),
 			setUserSawOnboarding = get(),
-			didUserSeeOnboarding = get()
+			didUserSeeOnboarding = get(),
+			stateUseCase = get()
 		)
 	}
 

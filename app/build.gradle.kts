@@ -97,6 +97,7 @@ dependencies {
 	implementation(libs.androidx.navigation.runtime.ktx)
 	implementation(libs.androidx.navigation.compose)
 	implementation(libs.datastore)
+	implementation(libs.permissions)
 	implementation(libs.markdown)
 	implementation(libs.retrofit)
 	implementation(libs.retrofitConverter)

@@ -8,7 +8,8 @@
 	<string name="connection_title">Připojení</string>
 	<string name="connection_connected">Připojeno</string>
 	<string name="connection_not_connected">Nepřipojeno</string>
-	<string name="connection_hint">Připojte se k WiFi: OG Star Tracker</string>
+	<string name="connection_hint">- Připojte se k WiFi: OG Star Tracker</string>
+	<string name="location_hint">- Povolte přístup k lokaci</string>
 	<string name="photo_control_title">Ovládání fotografií</string>
 	<string name="photo_control_subtitle">Zasílání automatizovaných příkazů do kamery</string>
 	<string name="photo_control_intervalometer">Nastavení intervalometru</string>

@@ -14,6 +14,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import og.ogstartracker.Config.SCREEN_DASHBOARD
+import og.ogstartracker.Config.SCREEN_SETTINGS
 import og.ogstartracker.R
 import og.ogstartracker.ui.components.common.ProvidesInsets
 import og.ogstartracker.ui.screens.DashboardScreen
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
 		setSplashScreen()
 
 		enableEdgeToEdge()
+
 		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
 		setContent {
@@ -43,17 +46,17 @@ class MainActivity : ComponentActivity() {
 				ProvidesInsets {
 					NavHost(
 						navController = navController,
-						startDestination = "dashboard",
+						startDestination = SCREEN_DASHBOARD,
 						enterTransition = slideEnterAnimation(),
 						exitTransition = slideExitAnimation(),
 						popEnterTransition = slidePopEnterAnimation(),
 						popExitTransition = slidePopExitAnimation(),
 					) {
-						composable("dashboard") {
+						composable(SCREEN_DASHBOARD) {
 							DashboardScreen(navController = navController)
 						}
 
-						composable("settings") {
+						composable(SCREEN_SETTINGS) {
 							SettingsScreen(navController = navController)
 						}
 					}
@@ -71,7 +74,7 @@ class MainActivity : ComponentActivity() {
 		}
 
 		lifecycleScope.launch {
-			delay(1500)
+			delay(750)
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 				splashScreen.setKeepOnScreenCondition { false }
 			} else {

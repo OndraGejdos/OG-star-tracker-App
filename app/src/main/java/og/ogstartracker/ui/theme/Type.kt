@@ -64,6 +64,8 @@ val textStyle12Bold = TextStyle(
 	fontFamily = interAppFontFamily,
 )
 
+val textStyle12ItalicBold = textStyle12Bold.copy(fontStyle = FontStyle.Italic)
+
 val textStyle14Bold = TextStyle(
 	fontWeight = FontWeight.Bold,
 	fontSize = 14.sp,

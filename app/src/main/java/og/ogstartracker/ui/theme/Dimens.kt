@@ -35,6 +35,7 @@ val DimensLarge275 = 88.dp
 val DimensLarge300 = 96.dp
 
 val GeneralIconSize = 24.dp
+val BigGeneralIconSize = 48.dp
 
 val Shapes = Shapes(
 	small = RoundedCornerShape(DimensSmall100),

@@ -16,17 +16,18 @@ import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.domain.usecases.arduino.AbortCaptureUseCase
-import og.ogstartracker.domain.usecases.onboarding.DidUserSeeOnboardingUseCase
-import og.ogstartracker.domain.usecases.settings.GetCurrentHemisphereFlowUseCase
-import og.ogstartracker.domain.usecases.settings.GetSettingsUseCase
-import og.ogstartracker.domain.usecases.settings.SetNewSettingsUseCase
-import og.ogstartracker.domain.usecases.onboarding.SetUserSawOnboardingUseCase
-import og.ogstartracker.domain.usecases.settings.SettingItem
+import og.ogstartracker.domain.usecases.arduino.GetCurrentStateUseCase
 import og.ogstartracker.domain.usecases.arduino.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.arduino.StartSiderealTrackingUseCase
 import og.ogstartracker.domain.usecases.arduino.StopSiderealTrackingUseCase
 import og.ogstartracker.domain.usecases.arduino.TurnTrackerLeftUseCase
 import og.ogstartracker.domain.usecases.arduino.TurnTrackerRightUseCase
+import og.ogstartracker.domain.usecases.onboarding.DidUserSeeOnboardingUseCase
+import og.ogstartracker.domain.usecases.onboarding.SetUserSawOnboardingUseCase
+import og.ogstartracker.domain.usecases.settings.GetCurrentHemisphereFlowUseCase
+import og.ogstartracker.domain.usecases.settings.GetSettingsUseCase
+import og.ogstartracker.domain.usecases.settings.SetNewSettingsUseCase
+import og.ogstartracker.domain.usecases.settings.SettingItem
 import og.ogstartracker.ui.components.common.input.NotEmptyValidator
 import og.ogstartracker.ui.components.common.input.TextFieldState
 import og.ogstartracker.utils.VibratorController
@@ -43,6 +44,7 @@ class DashboardViewModel internal constructor(
 	private val trackerLeft: TurnTrackerLeftUseCase,
 	private val trackerRight: TurnTrackerRightUseCase,
 	private val startCapture: StartCaptureUseCase,
+	private val stateUseCase: GetCurrentStateUseCase,
 	private val abortCapture: AbortCaptureUseCase,
 	private val setNewSettings: SetNewSettingsUseCase,
 	private val setUserSawOnboarding: SetUserSawOnboardingUseCase,
@@ -86,6 +88,12 @@ class DashboardViewModel internal constructor(
 			shouldShowOnboardingDialog = !userSawOnboarding
 		)
 	}.stateIn(viewModelScope, WhileUiSubscribed, DashboardUiState())
+
+	init {
+		viewModelScope.launch(Dispatchers.Default) {
+			stateUseCase()
+		}
+	}
 
 	internal fun changeChecklist() {
 		_uiState.update { it.copy(openedCheckbox = !it.openedCheckbox) }
@@ -265,11 +273,20 @@ class DashboardViewModel internal constructor(
 			setUserSawOnboarding()
 		}
 	}
+
+	internal fun setHaveLocationPermission(active: Boolean) {
+		_uiState.update { it.copy(haveLocationPermission = active) }
+	}
+
+	internal fun setConnection(connected: Boolean) {
+		_uiState.update { it.copy(trackerConnected = connected) }
+	}
 }
 
 data class DashboardUiState internal constructor(
 	val hemisphere: Hemisphere? = null,
-	val trackerConnected: Boolean = true,
+	val trackerConnected: Boolean = false,
+	val haveLocationPermission: Boolean = false,
 	val openedCheckbox: Boolean = false,
 	val siderealActive: Boolean = false,
 	val ditheringEnabled: Boolean = false,

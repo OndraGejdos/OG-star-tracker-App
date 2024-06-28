@@ -1,7 +1,5 @@
 package og.ogstartracker.ui.components.cards
 
-import android.content.Intent
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,17 +30,18 @@ import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
+import og.ogstartracker.ui.theme.textStyle12ItalicBold
 import og.ogstartracker.ui.theme.textStyle24Bold
 import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun ConnectionCard(
 	connected: Boolean,
+	haveLocationPermission: Boolean,
+	onCardClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
-	val context = LocalContext.current
-
 	Column(
 		modifier = modifier
 			.fillMaxWidth()
@@ -59,7 +57,7 @@ fun ConnectionCard(
 				),
 				enabled = !connected
 			) {
-				context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS));
+				onCardClick()
 			}
 	) {
 		Row(
@@ -94,10 +92,17 @@ fun ConnectionCard(
 					style = textStyle24Bold,
 					color = AppTheme.colorScheme.primary
 				)
+				if (!haveLocationPermission) {
+					Text(
+						text = stringResource(id = R.string.location_hint),
+						style = textStyle12ItalicBold,
+						color = ColorSecondary
+					)
+				}
 				if (!connected) {
 					Text(
 						text = stringResource(id = R.string.connection_hint),
-						style = textStyle10ItalicBold,
+						style = textStyle12ItalicBold,
 						color = ColorSecondary
 					)
 				}
@@ -123,9 +128,24 @@ fun ConnectionCardPreview() {
 		Column {
 			ConnectionCard(
 				connected = false,
+				onCardClick = {},
+				haveLocationPermission = false
 			)
 			ConnectionCard(
 				connected = true,
+				onCardClick = {},
+				haveLocationPermission = false
+			)
+
+			ConnectionCard(
+				connected = false,
+				onCardClick = {},
+				haveLocationPermission = true
+			)
+			ConnectionCard(
+				connected = true,
+				onCardClick = {},
+				haveLocationPermission = true
 			)
 		}
 	}

@@ -1,5 +1,12 @@
 package og.ogstartracker.ui.screens
 
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.Uri
+import android.net.wifi.WifiManager
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import android.provider.Settings.ACTION_WIFI_SETTINGS
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,14 +31,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import og.ogstartracker.Config
+import og.ogstartracker.Config.SCREEN_SETTINGS
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
@@ -44,6 +64,7 @@ import og.ogstartracker.ui.components.cards.SlewControlCard
 import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.components.common.LocalInsets
 import og.ogstartracker.ui.theme.AppTheme
+import og.ogstartracker.ui.theme.BigGeneralIconSize
 import og.ogstartracker.ui.theme.DimensNormal100
 import og.ogstartracker.ui.theme.DimensNormal200
 import og.ogstartracker.ui.theme.DimensNormal75
@@ -53,24 +74,51 @@ import og.ogstartracker.ui.theme.textStyle20Bold
 import og.ogstartracker.utils.SystemUiHelper
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DashboardScreen(
 	navController: NavController,
 	viewModel: DashboardViewModel = koinViewModel(),
 ) {
+	// setup system icon colors
 	SystemUiHelper(statusIconsLight = true, navigationIconsLight = true)
+
+	val context = LocalContext.current
+
+	val uiState by viewModel.uiState.collectAsState()
+
+	val fineLocationPermissionState = rememberPermissionState(
+		android.Manifest.permission.ACCESS_FINE_LOCATION
+	)
+
+	InitLifecycleListener(onResume = {
+		// save user choice of location
+		viewModel.setHaveLocationPermission(fineLocationPermissionState.status.isGranted)
+
+		fineLocationPermissionState.status.isGranted.let {
+			// detect if user is on the correct wifi
+			val connectivityManager = context.getSystemService<ConnectivityManager>() ?: return@let
+			val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
+			networkCapabilities?.takeIf { it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) }?.let innerLet@{
+				val wifiManager = context.getSystemService<WifiManager>() ?: return@let
+
+				val correctWifi = wifiManager.connectionInfo.ssid == Config.WIFI_SSID
+				viewModel.setConnection(correctWifi)
+			}
+		}
+	})
 
 	var showInfoDialog by remember { mutableStateOf(false) }
 
 	val scope = rememberCoroutineScope()
-
-	val uiState by viewModel.uiState.collectAsState()
 
 	if (uiState.shouldShowOnboardingDialog) {
 		showInfoDialog = true
 	}
 
 	LaunchedEffect(Unit) {
+		// preload last user settings
 		scope.launch {
 			viewModel.settingsItemsFlow.first()
 		}
@@ -83,12 +131,33 @@ fun DashboardScreen(
 		onSlewControlEvent = viewModel::slewControlEvent,
 		onPhotoControlEvent = viewModel::photoControlEvent,
 		onGearClick = {
-			navController.navigate("settings")
+			navController.navigate(SCREEN_SETTINGS)
 		},
 		onInfoClick = {
 			showInfoDialog = true
 		},
 		notifyAboutChange = viewModel::notifyAboutChange,
+		onConnectionClick = {
+			if (uiState.trackerConnected) return@DashboardScreenContent
+
+			when {
+				// user permanently banned location, navigate to app settings
+				fineLocationPermissionState.status == PermissionStatus.Denied(shouldShowRationale = true) ->
+					context.startActivity(Intent(ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+						setData(Uri.fromParts("package", context.packageName, null))
+					})
+
+				// user did not enabled location, request
+				!fineLocationPermissionState.status.isGranted && !fineLocationPermissionState.status.shouldShowRationale -> {
+					fineLocationPermissionState.launchPermissionRequest()
+				}
+
+				// user enabled location, but is on wrong wifi, open settings
+				fineLocationPermissionState.status.isGranted -> {
+					context.startActivity(Intent(ACTION_WIFI_SETTINGS))
+				}
+			}
+		}
 	)
 
 	if (showInfoDialog) {
@@ -107,6 +176,7 @@ private fun DashboardScreenContent(
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	onGearClick: () -> Unit,
+	onConnectionClick: () -> Unit,
 	notifyAboutChange: (SettingItem, Int?) -> Unit,
 	onInfoClick: () -> Unit,
 	modifier: Modifier = Modifier,
@@ -123,7 +193,8 @@ private fun DashboardScreenContent(
 				onPhotoControlEvent = onPhotoControlEvent,
 				onGearClick = onGearClick,
 				onInfoClick = onInfoClick,
-				notifyAboutChange = notifyAboutChange
+				notifyAboutChange = notifyAboutChange,
+				onConnectionClick = onConnectionClick
 			)
 		},
 		containerColor = MaterialTheme.colorScheme.surface,
@@ -137,6 +208,7 @@ private fun DashboardScreenLayout(
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	onGearClick: () -> Unit,
+	onConnectionClick: () -> Unit,
 	notifyAboutChange: (SettingItem, Int?) -> Unit,
 	onInfoClick: () -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
@@ -163,7 +235,7 @@ private fun DashboardScreenLayout(
 						tint = AppTheme.colorScheme.primary,
 						contentDescription = null,
 						modifier = Modifier
-							.size(48.dp)
+							.size(BigGeneralIconSize)
 							.padding(DimensSmall100)
 					)
 				}
@@ -184,7 +256,7 @@ private fun DashboardScreenLayout(
 						tint = AppTheme.colorScheme.primary,
 						contentDescription = null,
 						modifier = Modifier
-							.size(48.dp)
+							.size(BigGeneralIconSize)
 							.padding(DimensSmall100)
 					)
 				}
@@ -192,7 +264,11 @@ private fun DashboardScreenLayout(
 		}
 
 		item {
-			ConnectionCard(connected = uiState.trackerConnected)
+			ConnectionCard(
+				connected = uiState.trackerConnected,
+				onCardClick = onConnectionClick,
+				haveLocationPermission = uiState.haveLocationPermission
+			)
 		}
 
 		item {
@@ -235,6 +311,26 @@ private fun DashboardScreenLayout(
 	}
 }
 
+// trigger function when this screen comes to front
+@Composable
+private fun InitLifecycleListener(onResume: suspend () -> Unit) {
+	val lifecycleOwner = LocalLifecycleOwner.current
+	DisposableEffect(lifecycleOwner) {
+		val observer = LifecycleEventObserver { _, event ->
+			if (event == Lifecycle.Event.ON_RESUME) {
+				lifecycleOwner.lifecycleScope.launch {
+					onResume()
+				}
+			}
+		}
+
+		lifecycleOwner.lifecycle.addObserver(observer)
+		onDispose {
+			lifecycleOwner.lifecycle.removeObserver(observer)
+		}
+	}
+}
+
 @Composable
 @Preview
 internal fun HomeScreenContentPreview() {
@@ -247,7 +343,8 @@ internal fun HomeScreenContentPreview() {
 			onPhotoControlEvent = {},
 			onInfoClick = {},
 			onGearClick = {},
-			notifyAboutChange = { _, _ -> }
+			notifyAboutChange = { _, _ -> },
+			onConnectionClick = {}
 		)
 	}
 }

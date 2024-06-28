@@ -61,6 +61,7 @@ retrofitConverter = { module = "com.squareup.retrofit2:converter-moshi", version
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "markdown" }
 
 [plugins]
