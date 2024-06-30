@@ -106,6 +106,7 @@ dependencies {
 	implementation(libs.timber)
 	implementation(libs.okhttpInterceptor)
 	implementation(libs.splashScreen)
+	implementation(libs.preferences)
 	debugImplementation(libs.androidx.ui.tooling)
 
 	implementation(libs.koinCore)

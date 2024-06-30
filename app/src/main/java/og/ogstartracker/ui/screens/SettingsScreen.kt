@@ -1,11 +1,11 @@
 package og.ogstartracker.ui.screens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import me.zhanghai.compose.preference.ListPreferenceType
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import me.zhanghai.compose.preference.listPreference
+import me.zhanghai.compose.preference.switchPreference
 import og.ogstartracker.R
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.ui.components.common.Divider
@@ -115,13 +119,74 @@ private fun SettingsScreenLayout(
 	onHemisphereClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	Column(modifier = modifier.fillMaxSize()) {
-		Divider()
-		Hemisphere(
-			onClick = onHemisphereClick,
-			hemisphere = uiState.hemisphere ?: Hemisphere.NORTH
-		)
-		Divider()
+	ProvidePreferenceLocals {
+		LazyColumn(modifier = modifier.fillMaxSize()) {
+			listPreference(
+				key = "two_target_switch_preference",
+				icon = {
+					Icon(
+						imageVector = ImageVector.vectorResource(id = R.drawable.ic_earth),
+						tint = AppTheme.colorScheme.primary,
+						contentDescription = null
+					)
+				},
+				defaultValue = Hemisphere.NORTH,
+				values = Hemisphere.entries,
+				title = {
+					Text(
+						text = "Your hemisphere",
+						style = textStyle16Regular,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				summary = {
+					Text(
+						text = stringResource(id = it.text).uppercase(),
+						style = textStyle16Bold,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				type = ListPreferenceType.DROPDOWN_MENU
+			)
+
+			item {
+				Divider()
+			}
+
+			switchPreference(
+				key = "vibrations",
+				defaultValue = true,
+				title = {
+					Text(
+						text = "Your hemisphere",
+						style = textStyle16Regular,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				summary = {
+					Text(
+						text = "asdas".uppercase(),
+						style = textStyle16Bold,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				icon = {
+					Icon(
+						imageVector = ImageVector.vectorResource(id = R.drawable.vibrate),
+						tint = AppTheme.colorScheme.primary,
+						contentDescription = null
+					)
+				}
+			)
+		}
+
+
+//		Divider()
+//		Hemisphere(
+//			onClick = onHemisphereClick,
+//			hemisphere = uiState.hemisphere ?: Hemisphere.NORTH
+//		)
+//		Divider()
 	}
 }
 
