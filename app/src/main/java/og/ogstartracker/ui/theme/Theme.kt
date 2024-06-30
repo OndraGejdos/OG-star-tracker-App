@@ -17,13 +17,14 @@ val DarkColorScheme = AppColorScheme(
 		secondary = ColorSecondary,
 		tertiary = ColorBackground,
 		background = ColorBackground,
-		surface = ColorBackground
+		surface = ColorBackground,
+		onSurfaceVariant = ColorBackground
 	),
 	background = ColorBackground,
 	primary = ColorPrimary,
 	primaryAlpha50 = ColorPrimary.copy(alpha = 0.5f),
 	secondary = ColorSecondary,
-	shadow = ColorShadow
+	shadow = ColorShadow,
 )
 
 // palette builder here https://m3.material.io/theme-builder#/custom

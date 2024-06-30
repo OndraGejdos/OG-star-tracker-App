@@ -6,8 +6,11 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.preference.PreferenceManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
+import me.zhanghai.compose.preference.getPreferenceFlow
+import og.ogstartracker.Config.PREFERENCES_VIBRATIONS
 
 /**
  * Controller class for vibrator. Handles multiple Android SDK versions at a time.
@@ -24,11 +27,18 @@ class VibratorController constructor(
 	private var vibrator: Vibrator? = null
 	private var vibratorManager: VibratorManager? = null
 
+	private fun areVibrationsEnabled(): Boolean? =
+		PreferenceManager.getDefaultSharedPreferences(context)
+			.getPreferenceFlow()
+			.value[PREFERENCES_VIBRATIONS]
+
 	/**
 	 * Starts vibrations based on the SDK version. If the device is S+ it will use [startVibrationsOnS] to start it else
 	 * it will use [startVibrationsPreS].
 	 */
 	fun startVibrations(vibrationPattern: LongArray) {
+		if (areVibrationsEnabled() != true) return
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 			startVibrationsOnS(vibrationPattern)
 		} else {

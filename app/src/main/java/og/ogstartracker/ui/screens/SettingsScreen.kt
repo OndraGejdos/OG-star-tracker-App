@@ -1,9 +1,6 @@
 package og.ogstartracker.ui.screens
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,9 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,17 +26,19 @@ import androidx.navigation.NavController
 import me.zhanghai.compose.preference.ListPreferenceType
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.listPreference
-import me.zhanghai.compose.preference.switchPreference
+import me.zhanghai.compose.preference.preference
+import me.zhanghai.compose.preference.preferenceCategory
+import og.ogstartracker.Config.PREFERENCES_HEMISPHERE
+import og.ogstartracker.Config.PREFERENCES_VIBRATIONS
 import og.ogstartracker.R
 import og.ogstartracker.domain.models.Hemisphere
-import og.ogstartracker.ui.components.common.Divider
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.DimensNormal100
-import og.ogstartracker.ui.theme.DimensNormal150
-import og.ogstartracker.ui.theme.textStyle16Bold
+import og.ogstartracker.ui.theme.textStyle14Bold
 import og.ogstartracker.ui.theme.textStyle16Regular
 import og.ogstartracker.ui.theme.textStyle20Bold
 import og.ogstartracker.utils.SystemUiHelper
+import og.ogstartracker.utils.switchPreferences
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,9 +57,6 @@ fun SettingsScreen(
 	SettingsScreenContent(
 		uiState = uiState,
 		onBack = navController::navigateUp,
-		onHemisphereClick = {
-			showHemisphereBS = true
-		}
 	)
 
 	if (showHemisphereBS) {
@@ -75,7 +71,6 @@ fun SettingsScreen(
 private fun SettingsScreenContent(
 	uiState: SettingsUiState,
 	onBack: () -> Unit,
-	onHemisphereClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	Scaffold(
@@ -106,7 +101,6 @@ private fun SettingsScreenContent(
 			SettingsScreenLayout(
 				modifier = Modifier.padding(top = paddings.calculateTopPadding()),
 				uiState = uiState,
-				onHemisphereClick = onHemisphereClick
 			)
 		},
 		containerColor = MaterialTheme.colorScheme.surface,
@@ -116,13 +110,25 @@ private fun SettingsScreenContent(
 @Composable
 private fun SettingsScreenLayout(
 	uiState: SettingsUiState,
-	onHemisphereClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
+	val context = LocalContext.current
+
 	ProvidePreferenceLocals {
 		LazyColumn(modifier = modifier.fillMaxSize()) {
+			preferenceCategory(
+				key = "general",
+				title = {
+					Text(
+						text = stringResource(id = R.string.settings_general),
+						style = textStyle14Bold,
+						color = AppTheme.colorScheme.primary
+					)
+				}
+			)
+
 			listPreference(
-				key = "two_target_switch_preference",
+				key = PREFERENCES_HEMISPHERE,
 				icon = {
 					Icon(
 						imageVector = ImageVector.vectorResource(id = R.drawable.ic_earth),
@@ -130,43 +136,32 @@ private fun SettingsScreenLayout(
 						contentDescription = null
 					)
 				},
-				defaultValue = Hemisphere.NORTH,
-				values = Hemisphere.entries,
+				defaultValue = context.getString(Hemisphere.NORTH.text),
+				values = Hemisphere.entries.map { context.getString(it.text) },
 				title = {
 					Text(
-						text = "Your hemisphere",
+						text = stringResource(id = R.string.settings_hemisphere),
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.primary
 					)
 				},
 				summary = {
 					Text(
-						text = stringResource(id = it.text).uppercase(),
-						style = textStyle16Bold,
+						text = it,
+						style = textStyle14Bold,
 						color = AppTheme.colorScheme.primary
 					)
 				},
-				type = ListPreferenceType.DROPDOWN_MENU
+				type = ListPreferenceType.ALERT_DIALOG
 			)
 
-			item {
-				Divider()
-			}
-
-			switchPreference(
-				key = "vibrations",
+			switchPreferences(
+				key = PREFERENCES_VIBRATIONS,
 				defaultValue = true,
 				title = {
 					Text(
-						text = "Your hemisphere",
+						text = stringResource(id = R.string.settings_vibrations),
 						style = textStyle16Regular,
-						color = AppTheme.colorScheme.primary
-					)
-				},
-				summary = {
-					Text(
-						text = "asdas".uppercase(),
-						style = textStyle16Bold,
 						color = AppTheme.colorScheme.primary
 					)
 				},
@@ -174,59 +169,77 @@ private fun SettingsScreenLayout(
 					Icon(
 						imageVector = ImageVector.vectorResource(id = R.drawable.vibrate),
 						tint = AppTheme.colorScheme.primary,
-						contentDescription = null
+						contentDescription = null,
+						modifier = Modifier.padding(end = DimensNormal100)
 					)
 				}
 			)
+
+			preferenceCategory(
+				key = "version_details",
+				title = {
+					Text(
+						text = stringResource(id = R.string.settings_version_info),
+						style = textStyle14Bold,
+						color = AppTheme.colorScheme.primary
+					)
+				}
+			)
+
+			preference(
+				key = "tracker_version",
+				title = {
+					Text(
+						text = stringResource(id = R.string.settings_tracker_firmware),
+						style = textStyle16Regular,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				summary = {
+					Text(
+						text = (uiState.version ?: 0).toString(),
+						style = textStyle14Bold,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				icon = {
+					Icon(
+						imageVector = ImageVector.vectorResource(id = R.drawable.ic_cog),
+						tint = AppTheme.colorScheme.primary,
+						contentDescription = null,
+						modifier = Modifier.padding(end = DimensNormal100)
+					)
+				},
+				enabled = false,
+			)
+
+			preference(
+				key = "app_version",
+				title = {
+					Text(
+						text = stringResource(id = R.string.settings_android_version),
+						style = textStyle16Regular,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				summary = {
+					Text(
+						text = context.packageManager.getPackageInfo(context.packageName, 0).versionName,
+						style = textStyle14Bold,
+						color = AppTheme.colorScheme.primary
+					)
+				},
+				icon = {
+					Icon(
+						imageVector = ImageVector.vectorResource(id = R.drawable.android),
+						tint = AppTheme.colorScheme.primary,
+						contentDescription = null,
+						modifier = Modifier.padding(end = DimensNormal100)
+					)
+				},
+				enabled = false,
+			)
 		}
-
-
-//		Divider()
-//		Hemisphere(
-//			onClick = onHemisphereClick,
-//			hemisphere = uiState.hemisphere ?: Hemisphere.NORTH
-//		)
-//		Divider()
-	}
-}
-
-@Composable
-fun Hemisphere(
-	hemisphere: Hemisphere,
-	onClick: () -> Unit,
-	modifier: Modifier = Modifier
-) {
-	Row(
-		verticalAlignment = Alignment.CenterVertically,
-		modifier = modifier
-			.fillMaxWidth()
-			.padding(horizontal = DimensNormal100, vertical = DimensNormal150)
-			.clickable {
-				onClick()
-			}
-	) {
-		Text(
-			text = stringResource(id = R.string.settings_hemisphere),
-			style = textStyle16Regular,
-			color = AppTheme.colorScheme.primary,
-			modifier = modifier.weight(1f)
-		)
-		Text(
-			text = stringResource(id = hemisphere.text).uppercase(),
-			style = textStyle16Bold,
-			color = AppTheme.colorScheme.primary
-		)
-	}
-}
-
-@Preview
-@Composable
-fun HemispherePreview() {
-	AppTheme {
-		Hemisphere(
-			onClick = {},
-			hemisphere = Hemisphere.NORTH
-		)
 	}
 }
 
@@ -237,7 +250,6 @@ internal fun SettingContentPreview() {
 		SettingsScreenContent(
 			uiState = SettingsUiState(),
 			onBack = {},
-			onHemisphereClick = {}
 		)
 	}
 }

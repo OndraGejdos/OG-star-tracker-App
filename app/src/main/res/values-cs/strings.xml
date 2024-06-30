@@ -44,6 +44,11 @@
 	<string name="settings_hemisphere">Vaše hemisféra</string>
 	<string name="settings_north">Severní</string>
 	<string name="settings_south">Jižní</string>
+	<string name="settings_general">Obecné</string>
+	<string name="settings_vibrations">Vibrace</string>
+	<string name="settings_version_info">Verze</string>
+	<string name="settings_tracker_firmware">Verze trackeru</string>
+	<string name="settings_android_version">Android aplikace</string>
 
 
 </resources>

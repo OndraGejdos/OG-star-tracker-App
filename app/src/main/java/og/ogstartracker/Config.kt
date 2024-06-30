@@ -12,4 +12,7 @@ object Config {
 
 	const val SCREEN_DASHBOARD = "dashboard"
 	const val SCREEN_SETTINGS = "settings"
+
+	const val PREFERENCES_VIBRATIONS = "vibrations"
+	const val PREFERENCES_HEMISPHERE = "hemisphere"
 }

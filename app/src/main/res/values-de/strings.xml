@@ -44,4 +44,9 @@
 	<string name="settings_hemisphere">Your hemisphere</string>
 	<string name="settings_north">Northern</string>
 	<string name="settings_south">Southern</string>
+	<string name="settings_general">General</string>
+	<string name="settings_vibrations">Vibrations</string>
+	<string name="settings_version_info">Version Info</string>
+	<string name="settings_tracker_firmware">Tracker Firmware</string>
+	<string name="settings_android_version">Android App</string>
 </resources>

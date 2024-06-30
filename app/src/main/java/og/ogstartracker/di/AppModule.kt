@@ -19,7 +19,8 @@ val appModule = module {
 	viewModel {
 		SettingsViewModel(
 			setCurrentHemisphere = get(),
-			getCurrentHemisphereFlow = get()
+			getCurrentHemisphereFlow = get(),
+			getVersion = get()
 		)
 	}
 

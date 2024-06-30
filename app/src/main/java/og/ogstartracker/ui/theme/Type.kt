@@ -46,11 +46,13 @@ val textStyle24Bold = TextStyle(
 	fontFamily = interAppFontFamily,
 )
 
-val textStyle20Bold = TextStyle(
-	fontWeight = FontWeight.Bold,
+val textStyle20Regular = TextStyle(
+	fontWeight = FontWeight.Normal,
 	fontSize = 20.sp,
 	fontFamily = interAppFontFamily,
 )
+
+val textStyle20Bold = textStyle20Regular.copy(fontWeight = FontWeight.Bold)
 
 val textStyle10Bold = TextStyle(
 	fontWeight = FontWeight.Bold,
