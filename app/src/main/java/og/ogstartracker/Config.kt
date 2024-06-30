@@ -8,6 +8,6 @@ object Config {
 
 	const val CAPTURING_INITIAL_DELAY = 3000L
 
-	const val SCREEN_DASHBOARD= "dashboard"
-	const val SCREEN_SETTINGS= "settings"
+	const val SCREEN_DASHBOARD = "dashboard"
+	const val SCREEN_SETTINGS = "settings"
 }

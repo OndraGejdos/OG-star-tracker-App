@@ -27,7 +27,6 @@ import og.ogstartracker.utils.WhileUiSubscribed
 import og.ogstartracker.utils.onSuccess
 import og.ogstartracker.utils.vibrationPatternClick
 import og.ogstartracker.utils.vibrationPatternThreeClick
-import timber.log.Timber
 
 private const val SECOND = 1000L
 
@@ -240,7 +239,6 @@ class DashboardViewModel internal constructor(
 	}
 
 	internal fun notifyAboutChange(settingItem: SettingItem, value: Int?) {
-		Timber.d("notifyAboutChange, settingItem: $settingItem, value: $value")
 		viewModelScope.launch(Dispatchers.Default) {
 			useCases.setNewSettings(SetNewSettingsUseCase.Input(settingItem, value))
 		}
