@@ -29,4 +29,6 @@ interface ArduinoRepository {
 	suspend fun getStatus(): Resource<String>
 
 	suspend fun resetLastMessage()
+
+	suspend fun getVersion(): Resource<String>
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import og.ogstartracker.Config.CAPTURING_INITIAL_DELAY
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
+import og.ogstartracker.Config.STATUS_TRACKING_ON
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
 import og.ogstartracker.domain.models.Hemisphere
@@ -58,6 +59,15 @@ class DashboardViewModel internal constructor(
 		return@combine
 	}
 		.stateIn(viewModelScope, WhileUiSubscribed, Unit)
+
+	init {
+		// fetch info if tracker is already in sidereal state
+		viewModelScope.launch(Dispatchers.Default) {
+			useCases.getCurrentState().onSuccess { status ->
+				_uiState.update { it.copy(siderealActive = status == STATUS_TRACKING_ON) }
+			}
+		}
+	}
 
 	private val _uiState = MutableStateFlow(DashboardUiState())
 	val uiState = combine(

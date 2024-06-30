@@ -1,7 +1,9 @@
 package og.ogstartracker.domain.usecases.providers
 
 import og.ogstartracker.domain.usecases.arduino.AbortCaptureUseCase
+import og.ogstartracker.domain.usecases.arduino.GetCurrentStateUseCase
 import og.ogstartracker.domain.usecases.arduino.GetLastArduinoMessageUseCase
+import og.ogstartracker.domain.usecases.arduino.GetVersionUseCase
 import og.ogstartracker.domain.usecases.arduino.ResetLastArduinoMessageUseCase
 import og.ogstartracker.domain.usecases.arduino.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.arduino.StartSiderealTrackingUseCase
@@ -28,4 +30,6 @@ data class DashboardUseCaseProvider constructor(
 	val didUserSeeOnboarding: DidUserSeeOnboardingUseCase,
 	val getCurrentHemisphereFlow: GetCurrentHemisphereFlowUseCase,
 	val getSettings: GetSettingsUseCase,
+	val getCurrentState: GetCurrentStateUseCase,
+	val getVersion: GetVersionUseCase,
 )

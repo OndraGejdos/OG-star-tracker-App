@@ -65,4 +65,8 @@ class ArduinoRepositoryImpl constructor(
 	override suspend fun resetLastMessage() {
 		_lastArduinoMessage.value = null
 	}
+
+	override suspend fun getVersion() = tryOnline {
+		arduinoApi.getVersion()
+	}
 }

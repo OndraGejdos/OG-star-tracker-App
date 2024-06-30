@@ -3,6 +3,7 @@ package og.ogstartracker.di
 import og.ogstartracker.domain.usecases.arduino.AbortCaptureUseCase
 import og.ogstartracker.domain.usecases.arduino.GetCurrentStateUseCase
 import og.ogstartracker.domain.usecases.arduino.GetLastArduinoMessageUseCase
+import og.ogstartracker.domain.usecases.arduino.GetVersionUseCase
 import og.ogstartracker.domain.usecases.arduino.ResetLastArduinoMessageUseCase
 import og.ogstartracker.domain.usecases.arduino.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.arduino.StartSiderealTrackingUseCase
@@ -111,6 +112,12 @@ val useCaseModule = module {
 	}
 
 	single {
+		GetVersionUseCase(
+			repository = get()
+		)
+	}
+
+	single {
 		DashboardUseCaseProvider(
 			startCapture = get(),
 			resetLastArduinoMessage = get(),
@@ -124,7 +131,9 @@ val useCaseModule = module {
 			stopSiderealTracking = get(),
 			trackerLeft = get(),
 			getCurrentHemisphereFlow = get(),
-			startSiderealTracking = get()
+			startSiderealTracking = get(),
+			getCurrentState = get(),
+			getVersion = get()
 		)
 	}
 }

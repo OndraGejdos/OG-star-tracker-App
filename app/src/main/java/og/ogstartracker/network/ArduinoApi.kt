@@ -38,4 +38,7 @@ interface ArduinoApi {
 
 	@GET("status")
 	suspend fun getStatus(): Response<String>
+
+	@GET("version")
+	suspend fun getVersion(): Response<String>
 }

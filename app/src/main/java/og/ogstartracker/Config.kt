@@ -6,6 +6,8 @@ object Config {
 
 	const val WIFI_SSID = "\"OG Star Tracker\""
 
+	const val STATUS_TRACKING_ON = "Tracking ON"
+
 	const val CAPTURING_INITIAL_DELAY = 3000L
 
 	const val SCREEN_DASHBOARD = "dashboard"
