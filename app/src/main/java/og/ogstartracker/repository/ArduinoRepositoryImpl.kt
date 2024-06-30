@@ -26,14 +26,14 @@ class ArduinoRepositoryImpl constructor(
 		_lastArduinoMessage.value = message
 	}
 
-	override suspend fun turnLeft(speed: Int) = tryOnline {
-		arduinoApi.turnLeft(speed)
+	override suspend fun turnLeft(stepCount: Int) = tryOnline {
+		arduinoApi.turnLeft(stepCount)
 	}.onSuccess { message ->
 		_lastArduinoMessage.value = message
 	}
 
-	override suspend fun turnRight(speed: Int) = tryOnline {
-		arduinoApi.turnRight(speed)
+	override suspend fun turnRight(stepCount: Int) = tryOnline {
+		arduinoApi.turnRight(stepCount)
 	}.onSuccess { message ->
 		_lastArduinoMessage.value = message
 	}
