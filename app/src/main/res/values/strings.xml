@@ -7,7 +7,7 @@
 	<string name="connection_title">Connection</string>
 	<string name="connection_connected">Connected</string>
 	<string name="connection_not_connected">Not Connected</string>
-	<string name="connection_hint">- Connect to WiFi: OG Star Tracker</string>
+	<string name="connection_hint">- Connect to WiFi: OG Star Tracker\n  Password: password123</string>
 	<string name="location_hint">- Enable Location</string>
 	<string name="photo_control_title">Photo Control</string>
 	<string name="photo_control_subtitle">Send Automated Commands to your camera</string>
