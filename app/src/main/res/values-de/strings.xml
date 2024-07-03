@@ -22,7 +22,7 @@
 	<string name="photo_control_focal_length">Brennweite</string>
 	<string name="photo_control_mm">mm</string>
 	<string name="photo_control_pixel_size">Pixel size</string>
-	<string name="photo_control_nm">nm</string>
+	<string name="photo_control_µm">µm</string>
 	<string name="photo_control_start_capture">Start capture</string>
 	<string name="photo_control_end_capture">Erfassung beenden</string>
 	<string name="photo_control_taken_exposures">Number of exposures taken</string>

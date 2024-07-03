@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import og.ogstartracker.Config.CAPTURING_INITIAL_DELAY
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.Config.STATUS_TRACKING_ON
@@ -28,6 +27,8 @@ import og.ogstartracker.utils.WhileUiSubscribed
 import og.ogstartracker.utils.onSuccess
 import og.ogstartracker.utils.vibrationPatternClick
 import og.ogstartracker.utils.vibrationPatternThreeClick
+import timber.log.Timber
+import kotlin.math.roundToInt
 
 private const val SECOND = 1000L
 
@@ -186,7 +187,7 @@ class DashboardViewModel internal constructor(
 								0
 							},
 							pixSize = if (uiState.value.ditheringEnabled) {
-								uiState.value.ditherPixelSize.textState.text.toIntOrNull() ?: return@sendCommand
+								(uiState.value.ditherPixelSize.textState.text.toDouble() * 100.0).roundToInt()
 							} else {
 								0
 							},
@@ -214,15 +215,16 @@ class DashboardViewModel internal constructor(
 
 		val exposureTime = uiState.value.exposeTime.textState.text.toIntOrNull() ?: return
 		val frameCount = uiState.value.frameCount.textState.text.toIntOrNull() ?: return
+		val ditherActive = uiState.value.ditheringEnabled
+
+		val fullDitherTime = (0.0.takeIf { !ditherActive } ?: ((frameCount / 3 * 2))).toInt()
+		val estimatedTime = (exposureTime * frameCount + (((frameCount - 1) * 3) + fullDitherTime)) * SECOND
 
 		timerJob = viewModelScope.launch(Dispatchers.Default) {
-			_uiState.update { it.copy(captureEstimatedTimeMillis = (exposureTime * frameCount * SECOND)) }
-			delay(CAPTURING_INITIAL_DELAY)
-
+			_uiState.update { it.copy(captureEstimatedTimeMillis = estimatedTime) }
 			val captureStarTime = System.currentTimeMillis()
-
-			while (exposureTime * frameCount > ((System.currentTimeMillis() - captureStarTime) / SECOND)) {
-				delay(exposureTime * SECOND)
+			while (estimatedTime > ((System.currentTimeMillis() - captureStarTime))) {
+				delay(SECOND)
 				_uiState.update {
 					it.copy(
 						captureCount = (it.captureCount ?: 0) + 1,

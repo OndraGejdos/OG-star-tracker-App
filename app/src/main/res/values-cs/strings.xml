@@ -22,7 +22,7 @@
 	<string name="photo_control_focal_length">Ohnisková vzdálenost</string>
 	<string name="photo_control_mm">mm</string>
 	<string name="photo_control_pixel_size">Velikost pixelu</string>
-	<string name="photo_control_nm">nm</string>
+	<string name="photo_control_µm">µm</string>
 	<string name="photo_control_start_capture">Zapnout</string>
 	<string name="photo_control_end_capture">Ukončit</string>
 	<string name="photo_control_taken_exposures">Počet provedených expozic</string>

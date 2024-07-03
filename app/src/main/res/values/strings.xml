@@ -21,7 +21,7 @@
 	<string name="photo_control_focal_length">Focal Length</string>
 	<string name="photo_control_mm">mm</string>
 	<string name="photo_control_pixel_size">Pixel Size</string>
-	<string name="photo_control_nm">nm</string>
+	<string name="photo_control_µm">µm</string>
 	<string name="photo_control_start_capture">Start</string>
 	<string name="photo_control_end_capture">End</string>
 	<string name="photo_control_taken_exposures">Number of exposures taken</string>

@@ -243,7 +243,7 @@ fun PhotoControlCard(
 				keyboardType = KeyboardType.Number,
 				trailingIcon = {
 					Text(
-						stringResource(id = R.string.photo_control_nm),
+						stringResource(id = R.string.photo_control_µm),
 						style = textStyle16Regular,
 						color = AppTheme.colorScheme.secondary
 					)
@@ -325,24 +325,25 @@ fun PhotoControlCard(
 
 @Composable
 private fun CaptureInfo(uiState: DashboardUiState) {
-	Row(
-		Modifier
-			.fillMaxWidth()
-			.padding(horizontal = DimensNormal100),
-		horizontalArrangement = Arrangement.SpaceBetween,
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		Text(
-			text = stringResource(id = R.string.photo_control_exposure_count).uppercase(),
-			style = textStyle12Bold,
-			color = AppTheme.colorScheme.secondary
-		)
-		Text(
-			text = uiState.getCaptureRatio(),
-			style = textStyle16Bold,
-			color = AppTheme.colorScheme.secondary
-		)
-	}
+	// TODO not easy to accurately represent, tweak later
+//	Row(
+//		Modifier
+//			.fillMaxWidth()
+//			.padding(horizontal = DimensNormal100),
+//		horizontalArrangement = Arrangement.SpaceBetween,
+//		verticalAlignment = Alignment.CenterVertically
+//	) {
+//		Text(
+//			text = stringResource(id = R.string.photo_control_exposure_count).uppercase(),
+//			style = textStyle12Bold,
+//			color = AppTheme.colorScheme.secondary
+//		)
+//		Text(
+//			text = uiState.getCaptureRatio(),
+//			style = textStyle16Bold,
+//			color = AppTheme.colorScheme.secondary
+//		)
+//	}
 
 	Row(
 		Modifier
@@ -388,13 +389,13 @@ private fun CaptureInfo(uiState: DashboardUiState) {
 		)
 		Text(
 			text = buildString {
-				append(uiState.captureElapsedTimeMillis?.milliseconds?.inWholeHours ?: 0)
+				append(uiState.captureElapsedTimeMillis?.toHours() ?: 0)
 				append(stringResource(id = R.string.photo_control_elapsed_time_hour))
 				append(" ")
-				append(uiState.captureElapsedTimeMillis?.milliseconds?.inWholeMinutes ?: 0)
+				append(uiState.captureElapsedTimeMillis?.toMinutes() ?: 0)
 				append(stringResource(id = R.string.photo_control_elapsed_time_minute))
 				append(" ")
-				append(uiState.captureElapsedTimeMillis?.milliseconds?.inWholeSeconds ?: 0)
+				append(uiState.captureElapsedTimeMillis?.toSeconds() ?: 0)
 				append(stringResource(id = R.string.photo_control_elapsed_time_second))
 			},
 			style = textStyle16Bold,

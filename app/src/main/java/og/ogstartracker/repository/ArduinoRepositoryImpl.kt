@@ -45,7 +45,7 @@ class ArduinoRepositoryImpl constructor(
 		pixSize: Int,
 		ditherEnabled: Int
 	) = tryOnline {
-		arduinoApi.startCapture(exposure, numExposures, focalLength, pixSize * 100, ditherEnabled)
+		arduinoApi.startCapture(exposure, numExposures, focalLength, pixSize, ditherEnabled)
 	}.onSuccess { message ->
 		_lastArduinoMessage.value = message
 	}
