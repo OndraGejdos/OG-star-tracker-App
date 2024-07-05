@@ -101,7 +101,7 @@ fun DialogContent(modifier: Modifier = Modifier) {
 		## Getting Started
 
 		1. **Setup Your Hardware:** Ensure your Star Tracker is properly assembled and aligned. Refer to the hardware manual for detailed instructions.
-		2. **Connect Your App:** Open the Star Tracker app and connect it to your Star Tracker hardware via Bluetooth or Wi-Fi.
+		2. **Connect Your App:** Open the Star Tracker app and connect it to your Star Tracker hardware via Wi-Fi.
 		3. **Calibrate:** Use the app to calibrate your mount. Follow the step-by-step guide within the app to ensure precise alignment.
 		4. **Start Tracking:** Select the celestial object you wish to observe or photograph, and let Star Tracker do the rest. Enjoy seamless tracking and enhanced viewing.
 

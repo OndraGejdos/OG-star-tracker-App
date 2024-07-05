@@ -9,6 +9,7 @@ object Config {
 	const val STATUS_TRACKING_ON = "Tracking ON"
 
 	const val CAPTURING_INITIAL_DELAY = 3000L
+	const val CHECK_WIFI_DURATION = 5_000L
 
 	const val SCREEN_DASHBOARD = "dashboard"
 	const val SCREEN_SETTINGS = "settings"

@@ -1,5 +1,6 @@
 package og.ogstartracker.ui.screens
 
+import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -44,6 +45,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -92,23 +94,20 @@ fun DashboardScreen(
 		android.Manifest.permission.ACCESS_FINE_LOCATION
 	)
 
-	InitLifecycleListener(onResume = {
-		// save user choice of location
-		viewModel.setHaveLocationPermission(fineLocationPermissionState.status.isGranted)
+	val checkWifi by viewModel.checkWifiEvent.collectAsState()
+	if (checkWifi) {
+		checkLocationPermission(viewModel, fineLocationPermissionState, context)
 
-		fineLocationPermissionState.status.isGranted.let {
-			// detect if user is on the correct wifi
-			val connectivityManager = context.getSystemService<ConnectivityManager>() ?: return@let
-			val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+		viewModel.resetWifiEvent()
+	}
 
-			networkCapabilities?.takeIf { it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) }?.let innerLet@{
-				val wifiManager = context.getSystemService<WifiManager>() ?: return@let
-
-				val correctWifi = wifiManager.connectionInfo.ssid == Config.WIFI_SSID
-				viewModel.setConnection(correctWifi)
-			}
-		}
-	})
+	InitLifecycleListener(
+		onResume = {
+			viewModel.startWiFiTimer()
+			checkLocationPermission(viewModel, fineLocationPermissionState, context)
+		},
+		onStop = viewModel::stopWiFiTimer
+	)
 
 	LaunchedEffect(uiState.lastMessage) {
 		uiState.lastMessage?.let { message ->
@@ -144,7 +143,7 @@ fun DashboardScreen(
 		onInfoClick = {
 			showInfoDialog = true
 		},
-		notifyAboutChange = viewModel::notifyAboutChange,
+		notifyAboutChange = viewModel::notifyCacheAboutChange,
 		onConnectionClick = {
 			if (uiState.trackerConnected) return@DashboardScreenContent
 
@@ -174,6 +173,36 @@ fun DashboardScreen(
 			showInfoDialog = false
 		})
 	}
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private fun checkLocationPermission(
+	viewModel: DashboardViewModel,
+	fineLocationPermissionState: PermissionState,
+	context: Context
+) {
+	viewModel.setHaveLocationPermission(fineLocationPermissionState.status.isGranted)
+
+	fineLocationPermissionState.status.isGranted.let {
+		// detect if user is on the correct wifi
+		if (checkWifiConnection(context, viewModel)) return@let
+	}
+}
+
+private fun checkWifiConnection(
+	context: Context,
+	viewModel: DashboardViewModel
+): Boolean {
+	val connectivityManager = context.getSystemService<ConnectivityManager>() ?: return true
+	val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
+	networkCapabilities?.takeIf { it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) }?.let innerLet@{
+		val wifiManager = context.getSystemService<WifiManager>() ?: return false
+
+		val correctWifi = wifiManager.connectionInfo.ssid == Config.WIFI_SSID
+		viewModel.setConnection(correctWifi)
+	}
+	return false
 }
 
 @Composable
@@ -319,14 +348,17 @@ private fun DashboardScreenLayout(
 	}
 }
 
-// trigger function when this screen comes to front
 @Composable
-private fun InitLifecycleListener(onResume: suspend () -> Unit) {
+private fun InitLifecycleListener(onResume: suspend () -> Unit, onStop: suspend () -> Unit) {
 	val lifecycleOwner = LocalLifecycleOwner.current
 	DisposableEffect(lifecycleOwner) {
 		val observer = LifecycleEventObserver { _, event ->
-			if (event == Lifecycle.Event.ON_RESUME) {
-				lifecycleOwner.lifecycleScope.launch {
+			lifecycleOwner.lifecycleScope.launch {
+				if (event == Lifecycle.Event.ON_STOP) {
+					onStop()
+				}
+
+				if (event == Lifecycle.Event.ON_RESUME) {
 					onResume()
 				}
 			}

@@ -6,10 +6,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import og.ogstartracker.Config.CHECK_WIFI_DURATION
 import og.ogstartracker.Config.SLEW_MAX_VALUE
 import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.Config.STATUS_TRACKING_ON
@@ -27,7 +29,6 @@ import og.ogstartracker.utils.WhileUiSubscribed
 import og.ogstartracker.utils.onSuccess
 import og.ogstartracker.utils.vibrationPatternClick
 import og.ogstartracker.utils.vibrationPatternThreeClick
-import timber.log.Timber
 import kotlin.math.roundToInt
 
 private const val SECOND = 1000L
@@ -37,7 +38,12 @@ class DashboardViewModel internal constructor(
 	private val useCases: DashboardUseCaseProvider,
 ) : ViewModel() {
 
-	private var timerJob: Job? = null
+	private var runTimer: Boolean = false
+	private var photoCaptureTimerJob: Job? = null
+	private var wifiTimerJob: Job? = null
+
+	private val _checkWifiEvent = MutableStateFlow(false)
+	val checkWifiEvent = _checkWifiEvent.asStateFlow()
 
 	val settingsItemsFlow = og.ogstartracker.utils.combine(
 		useCases.getSettings(SettingItem.PIXEL_SIZE),
@@ -70,56 +76,72 @@ class DashboardViewModel internal constructor(
 		}
 	}
 
+	/**
+	 * Main ui state of the screen. Holds everything ui related.
+	 */
 	private val _uiState = MutableStateFlow(DashboardUiState())
 	val uiState = combine(
-		useCases.getCurrentHemisphereFlow(),
 		_uiState,
+		useCases.getCurrentHemisphereFlow(),
 		useCases.didUserSeeOnboarding(),
 		useCases.getLastArduinoMessage()
-	) { hemisphere, uiState, userSawOnboarding, lastMessage ->
+	) { uiState, hemisphere, userSawOnboarding, lastMessage ->
 		uiState.copy(
 			hemisphere = hemisphere,
 			shouldShowOnboardingDialog = !userSawOnboarding,
 			lastMessage = lastMessage
 		)
-	}.stateIn(viewModelScope, WhileUiSubscribed, DashboardUiState())
+	}.stateIn(
+		scope = viewModelScope,
+		started = WhileUiSubscribed,
+		initialValue = DashboardUiState()
+	)
 
+	/**
+	 * This changes visibility of the checkbox on the screen.
+	 */
 	internal fun changeChecklist() {
 		_uiState.update { it.copy(openedCheckbox = !it.openedCheckbox) }
 	}
 
+	/**
+	 * This enables or disables sidereal tracking.
+	 */
 	internal fun changeSidereal(active: Boolean) {
 		if (active) {
 			sendCommand {
 				useCases.startSiderealTracking(uiState.value.hemisphere ?: return@sendCommand).onSuccess {
 					vibratorController.startVibrations(vibrationPatternThreeClick)
+					_uiState.update { it.copy(siderealActive = true) }
 				}
-				_uiState.update { it.copy(siderealActive = true) }
 			}
 		} else {
 			sendCommand {
 				useCases.stopSiderealTracking().onSuccess {
 					vibratorController.startVibrations(vibrationPatternClick)
+					_uiState.update { it.copy(siderealActive = false) }
 				}
-				_uiState.update { it.copy(siderealActive = false) }
 			}
 		}
 	}
 
+	/**
+	 * This controls slew mechanism.
+	 */
 	internal fun slewControlEvent(slewControlEvent: SlewControlEvent) {
 		when (slewControlEvent) {
 			SlewControlEvent.Minus -> {
 				val newValue = (uiState.value.slewValue - 1).coerceAtLeast(SLEW_MIN_VALUE)
 				_uiState.update { it.copy(slewValue = newValue) }
 				vibratorController.startVibrations(vibrationPatternClick)
-				notifyAboutChange(SettingItem.SLEW_SPEED, newValue)
+				notifyCacheAboutChange(SettingItem.SLEW_SPEED, newValue)
 			}
 
 			SlewControlEvent.Plus -> {
 				val newValue = (uiState.value.slewValue + 1).coerceAtMost(SLEW_MAX_VALUE)
 				_uiState.update { it.copy(slewValue = newValue) }
 				vibratorController.startVibrations(vibrationPatternClick)
-				notifyAboutChange(SettingItem.SLEW_SPEED, newValue)
+				notifyCacheAboutChange(SettingItem.SLEW_SPEED, newValue)
 			}
 
 			SlewControlEvent.RotateAnticlockwise -> {
@@ -140,6 +162,9 @@ class DashboardViewModel internal constructor(
 		}
 	}
 
+	/**
+	 * This control photo capture mechanism.
+	 */
 	internal fun photoControlEvent(photoControlEvent: PhotoControlEvent) {
 		when (photoControlEvent) {
 			is PhotoControlEvent.DitheringActivation -> {
@@ -170,7 +195,7 @@ class DashboardViewModel internal constructor(
 								captureEstimatedTimeMillis = 0
 							)
 						}
-						stopTimer()
+						stopPhotoCaptureTimer()
 					}
 				}
 			}
@@ -183,35 +208,36 @@ class DashboardViewModel internal constructor(
 							numExposures = uiState.value.frameCount.textState.text.toIntOrNull() ?: return@sendCommand,
 							focalLength = if (uiState.value.ditheringEnabled) {
 								uiState.value.ditherFocalLength.textState.text.toIntOrNull() ?: return@sendCommand
-							} else {
-								0
-							},
+							} else 0,
 							pixSize = if (uiState.value.ditheringEnabled) {
 								(uiState.value.ditherPixelSize.textState.text.toDouble() * 100.0).roundToInt()
-							} else {
-								0
-							},
+							} else 0,
 							ditherEnabled = if (uiState.value.ditheringEnabled) 1 else 0,
 						)
 					).onSuccess {
 						_uiState.update { it.copy(capturingActive = true, captureStartTime = System.currentTimeMillis()) }
-						startTimer()
+						startPhotoCaptureTimer()
 						vibratorController.startVibrations(vibrationPatternThreeClick)
 					}
 				}
-
 			}
 		}
 	}
 
+	/**
+	 * Helper function for communicating with arduino.
+	 */
 	private fun sendCommand(command: suspend () -> Unit) {
 		viewModelScope.launch(Dispatchers.Default) {
 			command()
 		}
 	}
 
-	private fun startTimer() {
-		timerJob?.cancel()
+	/**
+	 * Starts photo capture timer.
+	 */
+	private fun startPhotoCaptureTimer() {
+		photoCaptureTimerJob?.cancel()
 
 		val exposureTime = uiState.value.exposeTime.textState.text.toIntOrNull() ?: return
 		val frameCount = uiState.value.frameCount.textState.text.toIntOrNull() ?: return
@@ -220,7 +246,7 @@ class DashboardViewModel internal constructor(
 		val fullDitherTime = (0.0.takeIf { !ditherActive } ?: ((frameCount / 3 * 2))).toInt()
 		val estimatedTime = (exposureTime * frameCount + (((frameCount - 1) * 3) + fullDitherTime)) * SECOND
 
-		timerJob = viewModelScope.launch(Dispatchers.Default) {
+		photoCaptureTimerJob = viewModelScope.launch(Dispatchers.Default) {
 			_uiState.update { it.copy(captureEstimatedTimeMillis = estimatedTime) }
 			val captureStarTime = System.currentTimeMillis()
 			while (estimatedTime > ((System.currentTimeMillis() - captureStarTime))) {
@@ -241,38 +267,92 @@ class DashboardViewModel internal constructor(
 				)
 			}
 
-			stopTimer()
+			stopPhotoCaptureTimer()
 			photoControlEvent(PhotoControlEvent.EndCapture)
 		}
 	}
 
-	private fun stopTimer() {
-		timerJob?.cancel()
+	/**
+	 * Stops photo capture timer.
+	 */
+	private fun stopPhotoCaptureTimer() {
+		photoCaptureTimerJob?.cancel()
 	}
 
-	internal fun notifyAboutChange(settingItem: SettingItem, value: Int?) {
+	/**
+	 * Called when user changed some settings.
+	 */
+	internal fun notifyCacheAboutChange(settingItem: SettingItem, value: Int?) {
 		viewModelScope.launch(Dispatchers.Default) {
 			useCases.setNewSettings(SetNewSettingsUseCase.Input(settingItem, value))
 		}
 	}
 
+	/**
+	 * Saves event when user saw onboarding so that its not presented again on app start.
+	 */
 	internal fun setUserSawOnboard() {
 		viewModelScope.launch(Dispatchers.Default) {
 			useCases.setUserSawOnboarding()
 		}
 	}
 
+	/**
+	 * Track value if user did allow location permission.
+	 */
 	internal fun setHaveLocationPermission(active: Boolean) {
 		_uiState.update { it.copy(haveLocationPermission = active) }
 	}
 
+	/**
+	 * Track value if user have wifi connection.
+	 */
 	internal fun setConnection(connected: Boolean) {
 		_uiState.update { it.copy(trackerConnected = connected) }
 	}
 
+	/**
+	 * Resets last arduino message so that messages could be repeated (like "slewing").
+	 * StateFlow holds last value and will not trigger event if the value is the same.
+	 */
 	internal fun resetMessage() {
 		viewModelScope.launch(Dispatchers.Default) {
 			useCases.resetLastArduinoMessage()
+		}
+	}
+
+	/**
+	 * Resets StateFlow so that UI can be informed again.
+	 */
+	internal fun resetWifiEvent() {
+		_checkWifiEvent.value = false
+	}
+
+	/**
+	 * Stops repeatedly checking is user have the correct wifi.
+	 */
+	internal fun stopWiFiTimer() {
+		runTimer = false
+		wifiTimerJob?.cancel()
+	}
+
+	/**
+	 * Starts wifi check timer.
+	 */
+	internal fun startWiFiTimer() {
+		runTimer = true
+		startWiFiTimerJob()
+	}
+
+	/**
+	 * Starts coroutine that wifi timer is running on.
+	 */
+	private fun startWiFiTimerJob() {
+		wifiTimerJob = viewModelScope.launch(Dispatchers.Default) {
+			while (runTimer) {
+				delay(CHECK_WIFI_DURATION)
+				_checkWifiEvent.value = true
+			}
 		}
 	}
 }
@@ -297,12 +377,16 @@ data class DashboardUiState internal constructor(
 	val ditherFocalLength: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherPixelSize: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 ) {
-	fun getCaptureRatio() = buildString {
-		append(captureCount ?: 0)
-		append("/")
-		append(frameCount.textState.text.toIntOrNull() ?: 0)
-	}
+//	fun getCaptureRatio() = buildString {
+//		append(captureCount ?: 0)
+//		append("/")
+//		append(frameCount.textState.text.toIntOrNull() ?: 0)
+//	}
 
+	/**
+	 * Returns true if every required input have correct value.
+	 * Required inputs change according to what user enabled.
+	 */
 	fun arePhotoControlInputsValid(): Boolean {
 		val intervalometerValid = exposeTime.isValid() && frameCount.isValid()
 		val ditherValid = ditherFocalLength.isValid() && ditherPixelSize.isValid()
