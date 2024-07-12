@@ -321,8 +321,8 @@ class DashboardViewModel internal constructor(
 	/**
 	 * Track value if user have wifi connection.
 	 */
-	internal fun setConnection(connected: Boolean) {
-		_uiState.update { it.copy(trackerConnected = connected) }
+	internal fun setConnection(wifiConnected: Boolean) {
+		_uiState.update { it.copy(wifiConnected = wifiConnected) }
 	}
 
 	/**
@@ -390,7 +390,7 @@ class DashboardViewModel internal constructor(
 
 data class DashboardUiState internal constructor(
 	val hemisphere: Hemisphere? = null,
-	val trackerConnected: Boolean = false,
+	val wifiConnected: Boolean = false,
 	val haveLocationPermission: Boolean = false,
 	val openedCheckbox: Boolean = false,
 	val siderealActive: Boolean = false,

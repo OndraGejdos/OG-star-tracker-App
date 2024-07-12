@@ -146,7 +146,7 @@ fun DashboardScreen(
 		},
 		notifyAboutChange = viewModel::notifyCacheAboutChange,
 		onConnectionClick = {
-			if (uiState.trackerConnected) return@DashboardScreenContent
+			if (uiState.wifiConnected) return@DashboardScreenContent
 
 			when {
 				// user permanently banned location, navigate to app settings
@@ -307,7 +307,7 @@ private fun DashboardScreenLayout(
 
 		item {
 			ConnectionCard(
-				connected = uiState.trackerConnected,
+				connected = uiState.wifiConnected,
 				onCardClick = onConnectionClick,
 				haveLocationPermission = uiState.haveLocationPermission,
 			)
@@ -321,7 +321,7 @@ private fun DashboardScreenLayout(
 			ChecklistCard(
 				opened = uiState.openedCheckbox,
 				onClick = onChecklistClicked,
-				enabled = uiState.trackerConnected,
+				enabled = uiState.wifiConnected,
 				checkListItems = uiState.checkListItems,
 				onCardClick = onChecklistItemClicked,
 			)
@@ -333,7 +333,7 @@ private fun DashboardScreenLayout(
 				onCheckChanged = {
 					onSiderealClicked(!uiState.siderealActive)
 				},
-				enabled = uiState.trackerConnected,
+				enabled = uiState.wifiConnected,
 			)
 		}
 
@@ -341,7 +341,7 @@ private fun DashboardScreenLayout(
 			SlewControlCard(
 				slewControlCommands = onSlewControlEvent,
 				stepSize = uiState.slewValue,
-				enabled = uiState.trackerConnected,
+				enabled = uiState.wifiConnected,
 			)
 		}
 

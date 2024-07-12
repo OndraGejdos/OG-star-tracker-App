@@ -61,7 +61,6 @@ import og.ogstartracker.utils.segmentedShadow
 import og.ogstartracker.utils.toHours
 import og.ogstartracker.utils.toMinutes
 import og.ogstartracker.utils.toSeconds
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PhotoControlCard(
@@ -88,7 +87,7 @@ fun PhotoControlCard(
 			.clip(ShapeNormal)
 			.background(color = ColorBackground)
 			.animateContentSize()
-			.alpha(Constants.Percent.PERCENT_100.takeIf { uiState.trackerConnected } ?: Constants.Percent.PERCENT_50)
+			.alpha(Constants.Percent.PERCENT_100.takeIf { uiState.wifiConnected } ?: Constants.Percent.PERCENT_50)
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
@@ -132,7 +131,7 @@ fun PhotoControlCard(
 				.padding(top = DimensSmall100)
 		) {
 			ActionInput(
-				enabled = !uiState.capturingActive && uiState.trackerConnected,
+				enabled = !uiState.capturingActive && uiState.wifiConnected,
 				textFieldState = uiState.exposeTime,
 				label = stringResource(id = R.string.photo_control_exposure_length),
 				placeholder = "0",
@@ -151,7 +150,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
-				enabled = !uiState.capturingActive && uiState.trackerConnected,
+				enabled = !uiState.capturingActive && uiState.wifiConnected,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.frameCount,
 				label = stringResource(id = R.string.photo_control_exposure_count),
@@ -205,7 +204,7 @@ fun PhotoControlCard(
 					notifyAboutChange(SettingItem.DITHER_ACTIVE, if (it) 1 else 0)
 				},
 				modifier = Modifier.padding(end = DimensNormal100),
-				enabled = !uiState.capturingActive && uiState.trackerConnected,
+				enabled = !uiState.capturingActive && uiState.wifiConnected,
 			)
 		}
 
@@ -215,7 +214,7 @@ fun PhotoControlCard(
 				.padding(top = DimensNormal100)
 		) {
 			ActionInput(
-				enabled = !uiState.capturingActive && uiState.trackerConnected && uiState.ditheringEnabled,
+				enabled = !uiState.capturingActive && uiState.wifiConnected && uiState.ditheringEnabled,
 				textFieldState = uiState.ditherFocalLength,
 				label = stringResource(id = R.string.photo_control_focal_length),
 				placeholder = "0",
@@ -234,7 +233,7 @@ fun PhotoControlCard(
 				}
 			)
 			ActionInput(
-				enabled = !uiState.capturingActive && uiState.trackerConnected && uiState.ditheringEnabled,
+				enabled = !uiState.capturingActive && uiState.wifiConnected && uiState.ditheringEnabled,
 				modifier = Modifier.padding(top = DimensSmall100),
 				textFieldState = uiState.ditherPixelSize,
 				label = stringResource(id = R.string.photo_control_pixel_size),
@@ -283,7 +282,7 @@ fun PhotoControlCard(
 					.weight(1f)
 					.height(40.dp),
 				contentPadding = PaddingValues(horizontal = DimensSmall100),
-				enabled = !uiState.capturingActive && uiState.trackerConnected && uiState.arePhotoControlInputsValid(),
+				enabled = !uiState.capturingActive && uiState.wifiConnected && uiState.arePhotoControlInputsValid(),
 			) {
 				Text(
 					text = stringResource(id = R.string.photo_control_start_capture).uppercase(),
@@ -311,7 +310,7 @@ fun PhotoControlCard(
 					.weight(1f)
 					.height(40.dp),
 				contentPadding = PaddingValues(horizontal = DimensSmall100),
-				enabled = uiState.capturingActive && uiState.trackerConnected,
+				enabled = uiState.capturingActive && uiState.wifiConnected,
 			) {
 				Text(
 					text = stringResource(id = R.string.photo_control_end_capture).uppercase(),

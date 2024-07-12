@@ -143,7 +143,8 @@ fun CheckListItem(
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
-			.padding(vertical = DimensSmall50),
+			.padding(vertical = DimensSmall50)
+			.clickable { onCardClick(checkListItem) },
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Checkbox(
