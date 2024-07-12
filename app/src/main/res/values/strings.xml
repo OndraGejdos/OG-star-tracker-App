@@ -26,6 +26,7 @@
 	<string name="photo_control_end_capture">End</string>
 	<string name="photo_control_taken_exposures">Number of exposures taken</string>
 	<string name="photo_control_taken_exposures_value">%d/%d</string>
+	<string name="photo_control_start_time">Start time</string>
 	<string name="photo_control_elapsed_time">Elapsed Time</string>
 	<string name="photo_control_estimated_time">Estimated Time</string>
 	<string name="photo_control_elapsed_time_hour">h</string>

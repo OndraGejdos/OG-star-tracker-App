@@ -354,6 +354,35 @@ private fun CaptureInfo(uiState: DashboardUiState) {
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Text(
+			text = stringResource(id = R.string.photo_control_elapsed_time).uppercase(),
+			style = textStyle12Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+		Text(
+			text = buildString {
+				append(uiState.captureStartTime?.toHours() ?: 0)
+				append(stringResource(id = R.string.photo_control_elapsed_time_hour))
+				append(" ")
+				append(uiState.captureStartTime?.toMinutes() ?: 0)
+				append(stringResource(id = R.string.photo_control_elapsed_time_minute))
+				append(" ")
+				append(uiState.captureStartTime?.toSeconds() ?: 0)
+				append(stringResource(id = R.string.photo_control_elapsed_time_second))
+			},
+			style = textStyle16Bold,
+			color = AppTheme.colorScheme.secondary
+		)
+	}
+
+	Row(
+		Modifier
+			.fillMaxWidth()
+			.padding(horizontal = DimensNormal100)
+			.padding(top = DimensSmall100),
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Text(
 			text = stringResource(id = R.string.photo_control_estimated_time).uppercase(),
 			style = textStyle12Bold,
 			color = AppTheme.colorScheme.secondary

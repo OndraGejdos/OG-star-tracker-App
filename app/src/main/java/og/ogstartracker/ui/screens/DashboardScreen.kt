@@ -57,6 +57,7 @@ import og.ogstartracker.Config.SCREEN_SETTINGS
 import og.ogstartracker.R
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
+import og.ogstartracker.domain.models.CheckListItem
 import og.ogstartracker.domain.usecases.settings.SettingItem
 import og.ogstartracker.ui.components.InfoDialog
 import og.ogstartracker.ui.components.cards.ChecklistCard
@@ -164,7 +165,8 @@ fun DashboardScreen(
 					context.startActivity(Intent(ACTION_WIFI_SETTINGS))
 				}
 			}
-		}
+		},
+		onChecklistItemClicked = viewModel::updateCheckListItem
 	)
 
 	if (showInfoDialog) {
@@ -211,6 +213,7 @@ private fun DashboardScreenContent(
 	onChecklistClicked: () -> Unit,
 	onSiderealClicked: (Boolean) -> Unit,
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
+	onChecklistItemClicked: (CheckListItem) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
 	onGearClick: () -> Unit,
 	onConnectionClick: () -> Unit,
@@ -231,7 +234,8 @@ private fun DashboardScreenContent(
 				onGearClick = onGearClick,
 				onInfoClick = onInfoClick,
 				notifyAboutChange = notifyAboutChange,
-				onConnectionClick = onConnectionClick
+				onConnectionClick = onConnectionClick,
+				onChecklistItemClicked = onChecklistItemClicked,
 			)
 		},
 		containerColor = MaterialTheme.colorScheme.surface,
@@ -244,6 +248,7 @@ private fun DashboardScreenLayout(
 	onChecklistClicked: () -> Unit,
 	onSlewControlEvent: (SlewControlEvent) -> Unit,
 	onPhotoControlEvent: (PhotoControlEvent) -> Unit,
+	onChecklistItemClicked: (CheckListItem) -> Unit,
 	onGearClick: () -> Unit,
 	onConnectionClick: () -> Unit,
 	notifyAboutChange: (SettingItem, Int?) -> Unit,
@@ -304,7 +309,7 @@ private fun DashboardScreenLayout(
 			ConnectionCard(
 				connected = uiState.trackerConnected,
 				onCardClick = onConnectionClick,
-				haveLocationPermission = uiState.haveLocationPermission
+				haveLocationPermission = uiState.haveLocationPermission,
 			)
 		}
 
@@ -317,6 +322,8 @@ private fun DashboardScreenLayout(
 				opened = uiState.openedCheckbox,
 				onClick = onChecklistClicked,
 				enabled = uiState.trackerConnected,
+				checkListItems = uiState.checkListItems,
+				onCardClick = onChecklistItemClicked,
 			)
 		}
 
@@ -326,7 +333,7 @@ private fun DashboardScreenLayout(
 				onCheckChanged = {
 					onSiderealClicked(!uiState.siderealActive)
 				},
-				enabled = uiState.trackerConnected
+				enabled = uiState.trackerConnected,
 			)
 		}
 
@@ -342,7 +349,7 @@ private fun DashboardScreenLayout(
 			PhotoControlCard(
 				uiState = uiState,
 				onPhotoControlEvent = onPhotoControlEvent,
-				notifyAboutChange = notifyAboutChange
+				notifyAboutChange = notifyAboutChange,
 			)
 		}
 	}
@@ -384,7 +391,8 @@ internal fun HomeScreenContentPreview() {
 			onInfoClick = {},
 			onGearClick = {},
 			notifyAboutChange = { _, _ -> },
-			onConnectionClick = {}
+			onConnectionClick = {},
+			onChecklistItemClicked = {}
 		)
 	}
 }

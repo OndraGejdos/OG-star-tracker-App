@@ -49,6 +49,7 @@
 	<string name="settings_version_info">Verze</string>
 	<string name="settings_tracker_firmware">Verze trackeru</string>
 	<string name="settings_android_version">Android aplikace</string>
+	<string name="photo_control_start_time">Začátek snímání</string>
 
 
 </resources>

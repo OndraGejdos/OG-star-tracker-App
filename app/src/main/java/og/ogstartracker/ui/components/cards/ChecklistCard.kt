@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,26 +28,28 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import og.ogstartracker.Constants
 import og.ogstartracker.R
+import og.ogstartracker.domain.models.CheckListItem
 import og.ogstartracker.ui.theme.AppTheme
 import og.ogstartracker.ui.theme.ColorBackground
 import og.ogstartracker.ui.theme.ColorPrimary
 import og.ogstartracker.ui.theme.DimensNormal100
-import og.ogstartracker.ui.theme.DimensNormal200
+import og.ogstartracker.ui.theme.DimensSmall50
 import og.ogstartracker.ui.theme.GeneralIconSize
 import og.ogstartracker.ui.theme.ShapeNormal
-import og.ogstartracker.ui.theme.textStyle10Bold
 import og.ogstartracker.ui.theme.textStyle10ItalicBold
+import og.ogstartracker.ui.theme.textStyle12Bold
 import og.ogstartracker.ui.theme.textStyle16Bold
 import og.ogstartracker.utils.segmentedShadow
 
 @Composable
 fun ChecklistCard(
+	checkListItems: List<CheckListItem>,
 	enabled: Boolean,
 	opened: Boolean,
 	onClick: () -> Unit,
+	onCardClick: (CheckListItem) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
@@ -120,14 +124,61 @@ fun ChecklistCard(
 		}
 
 		if (opened) {
-			Text(
-				text = stringResource(id = R.string.checklist_items).uppercase(),
-				style = textStyle10Bold.copy(lineHeight = 22.sp),
-				color = AppTheme.colorScheme.secondary,
-				modifier = Modifier.padding(
-					start = GeneralIconSize + DimensNormal200,
-					bottom = DimensNormal100
+			checkListItems.forEach {
+				CheckListItem(
+					checkListItem = it,
+					onCardClick = onCardClick
 				)
+			}
+		}
+	}
+}
+
+@Composable
+fun CheckListItem(
+	checkListItem: CheckListItem,
+	onCardClick: (CheckListItem) -> Unit,
+	modifier: Modifier = Modifier
+) {
+	Row(
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(vertical = DimensSmall50),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Checkbox(
+			checked = checkListItem.checked,
+			onCheckedChange = { onCardClick(checkListItem) },
+			colors = CheckboxDefaults.colors(
+				checkedColor = AppTheme.colorScheme.primary,
+				uncheckedColor = AppTheme.colorScheme.primary,
+				checkmarkColor = AppTheme.colorScheme.background,
+			),
+			modifier = Modifier.padding(horizontal = DimensSmall50)
+		)
+
+		Text(
+			text = checkListItem.text,
+			style = textStyle12Bold,
+			color = AppTheme.colorScheme.secondary,
+			modifier = Modifier
+				.weight(1f)
+				.padding(end = DimensNormal100)
+
+		)
+	}
+}
+
+@Preview
+@Composable
+fun CheckListItemPreview() {
+	AppTheme {
+		Column {
+			CheckListItem(
+				CheckListItem("testasljd lasjdj salkdslak jdkljsakl jdasldjk salkd lskaj djsaldj lsasal", false), {}
+			)
+			CheckListItem(
+				CheckListItem("testasljd lasjdj salkdslak jdkljsakl jdasldjk salkd lskaj djsaldj lsasal", true), {}
 			)
 		}
 	}
@@ -141,12 +192,16 @@ fun ChecklistCardPreview() {
 			ChecklistCard(
 				opened = false,
 				onClick = {},
-				enabled = true
+				enabled = true,
+				checkListItems = listOf(CheckListItem("test", false)),
+				onCardClick = {},
 			)
 			ChecklistCard(
 				opened = true,
 				onClick = {},
-				enabled = true
+				enabled = true,
+				checkListItems = listOf(CheckListItem("test", false)),
+				onCardClick = {},
 			)
 		}
 	}

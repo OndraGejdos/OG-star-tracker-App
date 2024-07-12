@@ -17,6 +17,7 @@ import og.ogstartracker.Config.SLEW_MIN_VALUE
 import og.ogstartracker.Config.STATUS_TRACKING_ON
 import og.ogstartracker.domain.events.PhotoControlEvent
 import og.ogstartracker.domain.events.SlewControlEvent
+import og.ogstartracker.domain.models.CheckListItem
 import og.ogstartracker.domain.models.Hemisphere
 import og.ogstartracker.domain.usecases.arduino.StartCaptureUseCase
 import og.ogstartracker.domain.usecases.providers.DashboardUseCaseProvider
@@ -33,6 +34,17 @@ import kotlin.math.roundToInt
 
 private const val SECOND = 1000L
 
+/**
+ * ViewModel for the Dashboard screen of the OG Star Tracker app.
+ *
+ * This ViewModel handles the UI logic for the Dashboard screen, including sidereal tracking,
+ * photo capture control, slew mechanism control, and WiFi connection checks. It interacts with
+ * various use cases to perform actions like starting and stopping sidereal tracking, managing
+ * photo captures, and updating UI state based on user interactions and background operations.
+ *
+ * @property vibratorController An instance of [VibratorController] for handling vibrations.
+ * @property useCases An instance of [DashboardUseCaseProvider] providing access to the use cases needed by the Dashboard.
+ */
 class DashboardViewModel internal constructor(
 	private val vibratorController: VibratorController,
 	private val useCases: DashboardUseCaseProvider,
@@ -247,7 +259,9 @@ class DashboardViewModel internal constructor(
 		val estimatedTime = (exposureTime * frameCount + (((frameCount - 1) * 3) + fullDitherTime)) * SECOND
 
 		photoCaptureTimerJob = viewModelScope.launch(Dispatchers.Default) {
-			_uiState.update { it.copy(captureEstimatedTimeMillis = estimatedTime) }
+			_uiState.update {
+				it.copy(captureEstimatedTimeMillis = estimatedTime)
+			}
 			val captureStarTime = System.currentTimeMillis()
 			while (estimatedTime > ((System.currentTimeMillis() - captureStarTime))) {
 				delay(SECOND)
@@ -345,6 +359,23 @@ class DashboardViewModel internal constructor(
 	}
 
 	/**
+	 * Manage checklist items.
+	 */
+	internal fun updateCheckListItem(checkListItem: CheckListItem) {
+		_uiState.update {
+			it.copy(
+				checkListItems = it.checkListItems.map { item ->
+					if (item.text == checkListItem.text) {
+						item.copy(checked = !item.checked)
+					} else {
+						item
+					}
+				}
+			)
+		}
+	}
+
+	/**
 	 * Starts coroutine that wifi timer is running on.
 	 */
 	private fun startWiFiTimerJob() {
@@ -376,6 +407,7 @@ data class DashboardUiState internal constructor(
 	val frameCount: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherFocalLength: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
 	val ditherPixelSize: TextFieldState = TextFieldState(text = "", validator = NotEmptyValidator()),
+	val checkListItems: List<CheckListItem> = defaultCheckListItems
 ) {
 //	fun getCaptureRatio() = buildString {
 //		append(captureCount ?: 0)
@@ -398,3 +430,24 @@ data class DashboardUiState internal constructor(
 		}
 	}
 }
+
+private val defaultCheckListItems = listOf(
+	CheckListItem("FIND A NICE AND STABLE PLACE FOR TRIPOD", false),
+	CheckListItem("LEVEL YOUR TRIPOD", false),
+	CheckListItem("ATTACH STAR TRACKER TO YOUR TRIPOD", false),
+	CheckListItem("ATTACH CAMERA TO STAR TRACKER", false),
+	CheckListItem("FIND SOME BRIGHT STAR AND FIND IT IN YOUR CAMERA LIVE VIEW", false),
+	CheckListItem("SET FOCUS (YOU CAN USE BAHTINOV MASK)", false),
+	CheckListItem("INSERT LASER (OR SKIP)", false),
+	CheckListItem("TARGET POLARIS (SET ROUGHLY YOUR ALTITUDE AND AZIMUTH)", false),
+	CheckListItem("REDIRECT CAMERA TO YOUR SHOOT TARGET", false),
+	CheckListItem("INSERT POLAR SCOPE (OR SKIP)", false),
+	CheckListItem("CALIBRATE NORTH CELESTIAL POLE (OR SKIP)", false),
+	CheckListItem("CHECK CAMERA TARGET AGAIN (OR SKIP)", false),
+	CheckListItem("CHECK POLAR SCOPE AGAIN (OR SKIP)", false),
+	CheckListItem("TURN ON SIDEREAL TRACKING", false),
+	CheckListItem("TAKE LIGHT FRAMES (YOU CAN USE INTERVALOMETER SETTINGS), TAKE AS MANY AS YOU WANT", false),
+	CheckListItem("TAKE DARK FRAMES (SAME SETTINGS, JUST COVER LENS WITH CAP, THE SAME OUTSIDE TEMPERATURE IS NEEDED!), TAKE 20", false),
+	CheckListItem("TAKE FLAT FRAMES (USE WHITE SHEET OF PAPER WITH WHITE PHONE SCREEN AND COVER THE LENS), TAKE 20", false),
+	CheckListItem("TAKE BIAS FRAMES (USE LENS COVER, FASTEST SHUTTER SPEED), TAKE 50-100", false),
+)
