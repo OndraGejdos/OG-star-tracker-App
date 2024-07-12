@@ -3,10 +3,10 @@
 	<string name="main_title">OG STAR TRACKER\nCONTROLLER</string>
 	<string name="checklist_title">CHECKLIST</string>
 	<string name="checklist_subtitle">Check if your prepared everything</string>
-	<string name="checklist_items">• LEVEL YOUR TRIPOD\n• PUT CAMERA INTO STAR TRACKER\n• FIND SOME BRIGHT STAR AND SET FOCUS\n• INSERT LASER OR POLAR SCOPE\n• TARGET POLARIS (SET YOUR ALT AND AZIMUT)\n• MOVE CAMERA TO YOUR SHOOT TARGET\n• TURN ON SIDEREAL TRACKING\n• GO FOR IT</string>
 	<string name="connection_title">Connection</string>
 	<string name="connection_connected">Connected</string>
 	<string name="connection_not_connected">Not Connected</string>
+	<string name="dialog_close">Close</string>
 	<string name="connection_hint">- Connect to WiFi: OG Star Tracker\n  Password: password123</string>
 	<string name="location_hint">- Enable Location</string>
 	<string name="photo_control_title">Photo Control</string>

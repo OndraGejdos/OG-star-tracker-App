@@ -18,7 +18,6 @@ import og.ogstartracker.Config.PREFERENCES_VIBRATIONS
  * @property repeat The index into the timings array at which to repeat, or -1 if you don't want to repeat indefinitely.
  * @property vibrationPattern allows to define which vibration pattern should be used for vibrations. It is used to
  * create VibrationEffect on Android SDK O+ devices. On older devices it is used directly.
- * @author [David Sucharda](mailto:david.sucharda@cleevio.com)
  */
 class VibratorController constructor(
 	private val context: Context,

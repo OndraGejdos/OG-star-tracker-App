@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
@@ -71,7 +72,7 @@ fun InfoDialog(
 				),
 			) {
 				Text(
-					text = "Close".uppercase(),
+					text = stringResource(id = R.string.dialog_close).uppercase(),
 					style = textStyle16Bold,
 					color = AppTheme.colorScheme.background
 				)
@@ -101,7 +102,8 @@ fun DialogContent(modifier: Modifier = Modifier) {
 		## Getting Started
 
 		1. **Setup Your Hardware:** Ensure your Star Tracker is properly assembled and aligned. Refer to the hardware manual for detailed instructions.
-		2. **Connect Your App:** Open the Star Tracker app and connect it to your Star Tracker hardware via Wi-Fi.
+		2. **Connect Your App:** Open the Star Tracker app and connect it to your Star Tracker hardware via
+		 Wi-Fi.
 		3. **Calibrate:** Use the app to calibrate your mount. Follow the step-by-step guide within the app to ensure precise alignment.
 		4. **Start Tracking:** Select the celestial object you wish to observe or photograph, and let Star Tracker do the rest. Enjoy seamless tracking and enhanced viewing.
 
