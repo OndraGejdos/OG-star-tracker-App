@@ -21,3 +21,5 @@ gen/
 local.properties
 app/dev/release/baselineProfiles
 app/dev/release
+app/ogstartracker.keystore
+app/prod.keystore
