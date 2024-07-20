@@ -32,7 +32,7 @@ class SettingsViewModel internal constructor(
 	init {
 		viewModelScope.launch(Dispatchers.Default) {
 			getVersion().onSuccess { version ->
-				_uiState.update { it.copy(version = version ?: 0) }
+				_uiState.update { it.copy(version = version) }
 			}
 		}
 	}

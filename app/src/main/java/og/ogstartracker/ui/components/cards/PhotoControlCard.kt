@@ -61,8 +61,11 @@ import og.ogstartracker.utils.segmentedShadow
 import og.ogstartracker.utils.toHours
 import og.ogstartracker.utils.toMinutes
 import og.ogstartracker.utils.toSeconds
+import java.text.DecimalFormat
 import java.time.Instant
 import java.time.ZoneId
+
+private val formatter = DecimalFormat("00")
 
 @Composable
 fun PhotoControlCard(
@@ -366,13 +369,10 @@ private fun CaptureInfo(uiState: DashboardUiState) {
 		Text(
 			text = buildString {
 				append(unixTime.hour)
-				append(stringResource(id = R.string.photo_control_elapsed_time_hour))
-				append(" ")
-				append(unixTime.minute)
-				append(stringResource(id = R.string.photo_control_elapsed_time_minute))
-				append(" ")
-				append(unixTime.second)
-				append(stringResource(id = R.string.photo_control_elapsed_time_second))
+				append(":")
+				append(formatter.format(unixTime.minute))
+				append(":")
+				append(formatter.format(unixTime.second))
 			},
 			style = textStyle16Bold,
 			color = AppTheme.colorScheme.secondary
