@@ -222,7 +222,7 @@ class DashboardViewModel internal constructor(
 								uiState.value.ditherFocalLength.textState.text.toIntOrNull() ?: return@sendCommand
 							} else 0,
 							pixSize = if (uiState.value.ditheringEnabled) {
-								(uiState.value.ditherPixelSize.textState.text.toDouble() * 100.0).roundToInt()
+								(uiState.value.ditherPixelSize.textState.text.replace(",", ".").toDouble() * 100.0).roundToInt()
 							} else 0,
 							ditherEnabled = if (uiState.value.ditheringEnabled) 1 else 0,
 						)

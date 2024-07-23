@@ -244,7 +244,7 @@ fun PhotoControlCard(
 				label = stringResource(id = R.string.photo_control_pixel_size),
 				placeholder = "0",
 				imeAction = ImeAction.Done,
-				keyboardType = KeyboardType.Number,
+				keyboardType = KeyboardType.Decimal,
 				trailingIcon = {
 					Text(
 						stringResource(id = R.string.photo_control_µm),

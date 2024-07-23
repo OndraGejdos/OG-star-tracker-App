@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.3]
+
+- fix crash when inserting wrong separator on pixel size
+
 ## [1.0.2]
 
 - fix time format on Photo Control start time
